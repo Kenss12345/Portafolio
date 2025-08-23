@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { doc, onSnapshot, updateDoc, increment } from "firebase/firestore";
-import { db } from "../firebase";
+
+const NAMESPACE = "kenss-portfolio";
+const KEY = "likes";
+const STORAGE_FLAG = "websiteIsLiked";
 
 const LikeButton = () => {
   const [likes, setLikes] = useState(0);
@@ -13,25 +15,40 @@ const LikeButton = () => {
   useEffect(() => {
     setIsClient(true);
 
-    const storedIsLiked = localStorage.getItem("websiteIsLiked");
+    const storedIsLiked = localStorage.getItem(STORAGE_FLAG);
     if (storedIsLiked) {
       setIsLiked(storedIsLiked === "true");
     }
 
-    // Listen for realtime updates from Firestore
-    const likeDocRef = doc(db, "likes", "counter");
-    const unsubscribe = onSnapshot(likeDocRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const currentLikes = docSnap.data().likes;
-        setLikes(Math.max(0, currentLikes));
-        setAnimateLikes(true);
-        setTimeout(() => setAnimateLikes(false), 300);
-      } else {
-        console.log("Document does not exist.");
-      }
-    });
+    const fetchCount = async () => {
+      try {
+        // Intentar obtener el contador actual
+        const res = await fetch(
+          `https://api.countapi.xyz/get/${encodeURIComponent(NAMESPACE)}/${encodeURIComponent(KEY)}`
+        );
 
-    return () => unsubscribe();
+        if (res.ok) {
+          const data = await res.json();
+          const current = typeof data?.value === "number" ? data.value : 0;
+          setLikes(Math.max(0, current));
+          setAnimateLikes(true);
+          setTimeout(() => setAnimateLikes(false), 300);
+          return;
+        }
+
+        // Si no existe, crearlo a 0
+        await fetch(
+          `https://api.countapi.xyz/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(
+            KEY
+          )}&value=0`
+        );
+        setLikes(0);
+      } catch (e) {
+        console.error("Error fetching likes count:", e);
+      }
+    };
+
+    fetchCount();
   }, []);
 
   const triggerLikeAnimation = () => {
@@ -51,12 +68,34 @@ const LikeButton = () => {
 
     try {
       setIsProcessing(true);
-      const likeDocRef = doc(db, "likes", "counter");
-      await updateDoc(likeDocRef, {
-        likes: increment(1),
-      });
+
+      // Incrementar el contador en CountAPI
+      const res = await fetch(
+        `https://api.countapi.xyz/hit/${encodeURIComponent(NAMESPACE)}/${encodeURIComponent(KEY)}`
+      );
+
+      if (!res.ok) {
+        // Intentar crear y luego volver a incrementar por primera vez
+        await fetch(
+          `https://api.countapi.xyz/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(
+            KEY
+          )}&value=0`
+        );
+        const res2 = await fetch(
+          `https://api.countapi.xyz/hit/${encodeURIComponent(NAMESPACE)}/${encodeURIComponent(KEY)}`
+        );
+        if (!res2.ok) throw new Error("No se pudo incrementar el contador");
+        const data2 = await res2.json();
+        const value2 = typeof data2?.value === "number" ? data2.value : 0;
+        setLikes(Math.max(0, value2));
+      } else {
+        const data = await res.json();
+        const value = typeof data?.value === "number" ? data.value : 0;
+        setLikes(Math.max(0, value));
+      }
+
       setIsLiked(true);
-      localStorage.setItem("websiteIsLiked", "true");
+      localStorage.setItem(STORAGE_FLAG, "true");
       triggerLikeAnimation();
     } catch (error) {
       console.error("Error updating likes:", error);
