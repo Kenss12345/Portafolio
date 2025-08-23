@@ -8,8 +8,8 @@ import SkillsList from "../React/SkillsList.tsx";
   <div class="max-w-5xl mx-auto space-y-8 md:py-36 pb-14">
     <div class="text-left space-y-4">
 
-      <div class="relative">
-        <div class="w-52 h-52 md:w-60 md:h-60 rounded-full border-4 border-[var(--sec)] shadow-xl">
+      <div class="relative reveal">
+        <div class="w-52 h-52 md:w-60 md:h-60 rounded-full border-4 border-[var(--sec)] shadow-xl animate-float shadow-[0_0_0_6px_rgba(164,118,255,0.12)]">
           <img 
             src="/perfil.png" 
             alt="Kenss Hilario Castro"
@@ -19,12 +19,12 @@ import SkillsList from "../React/SkillsList.tsx";
       </div>
 
       <div>
-        <p class="text-lg md:text-xl text-[var(--white-icon)] shiny-white">
+        <p class="text-lg md:text-xl text-[var(--white-icon)] shiny-white reveal reveal-del-1">
           Hola, Soy Kenss Hilario
         </p>
       </div>
 
-      <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+      <div class="flex flex-col lg:flex-row lg:items-center gap-6 reveal reveal-del-2">
         <h1 class="text-[var(--white)] text-5xl md:text-6xl font-semibold leading-tight">
           Desarrollador <br> de Software JR
         </h1>
@@ -39,18 +39,25 @@ import SkillsList from "../React/SkillsList.tsx";
         </p>
       </div>
 
+      <div class="reveal reveal-del-3">
+        <div class="flex flex-wrap gap-3 pt-1">
+          <a href="#projects" class="px-4 py-2 rounded-lg border border-[var(--white-icon-tr)] text-[var(--white)] bg-[var(--card)] hover:bg-[var(--card-hover)] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sec)]">Ver proyectos</a>
+          <a href="#contact" class="px-4 py-2 rounded-lg border border-[var(--white-icon-tr)] text-[var(--white)] hover:text-white hover:bg-[var(--white-icon-tr)] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sec)]">Contactar</a>
+        </div>
+      </div>
+
       <div>
-        <p class="text-lg md:text-xl text-[var(--white-icon)] shiny-white">
+        <p class="text-lg md:text-xl text-[var(--white-icon)] shiny-white reveal reveal-del-3">
           Puedes visitar mi:
         </p>
       </div>
 
-      <div class="flex justify-start gap-2 pt-3 md:pt-0">
+      <div class="flex justify-start gap-2 pt-3 md:pt-0 reveal reveal-del-3">
         <a
           target="_blank"
           href="https://github.com/Kenss12345"
           aria-label="GitHub"
-          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
+          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sec)]"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +74,7 @@ import SkillsList from "../React/SkillsList.tsx";
           target="_blank"
           href="https://linkedin.com/in/kenss-lin-kadú-hilario-castro-259a18227"
           aria-label="LinkedIn"
-          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)]"
+          class="text-[var(--white-icon)] hover:text-white transition duration-300 ease-in-out border border-1 border-[var(--white-icon-tr)] p-3 rounded-xl bg-[#1414149c] hover:bg-[var(--white-icon-tr)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sec)]"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -84,12 +91,16 @@ import SkillsList from "../React/SkillsList.tsx";
       </div>
     </div>
 
-    <LogoWall />
+    <div class="reveal">
+      <LogoWall />
+    </div>
 
     <div class="flex flex-col lg:flex-row items-center gap-8">
-      <SkillsList client:load />
+      <div class="reveal reveal-del-1 w-full">
+        <SkillsList client:load />
+      </div>
       <div
-        class="flex justify-center md:w-full md:h-[292px] size-[290px] pt-3 md:pt-9 md:ml-16"
+        class="flex justify-center md:w-full md:h-[292px] size-[290px] pt-3 md:pt-9 md:ml-16 reveal reveal-del-2"
       >
         <LetterGlitch
           client:load

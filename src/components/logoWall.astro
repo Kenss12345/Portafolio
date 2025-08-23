@@ -33,7 +33,7 @@ const technologies = [
   >
   </div>
 
-  <div class="flex animate-scroll hover:animate-paused gap-12 md:gap-20 w-max">
+  <div class="flex animate-scroll gap-12 md:gap-20 w-max" onmouseenter="this.style.animationPlayState='paused'" onmouseleave="this.style.animationPlayState='running'">
     {
       [...technologies, ...technologies, ...technologies].map((tech) => (
         <div class="flex items-center gap-2 group transition-all duration-300">
