@@ -4,8 +4,24 @@ type Project = {
   title: string;
   description: string;
   images: string[];
+  technologies: string[];
   repoUrl?: string;
   demoUrl?: string;
+};
+
+// Mapeo de tecnologías a íconos
+const techIcons: Record<string, string> = {
+  "C++": "/svg/C++.svg",
+  "C": "/svg/C.svg",
+  "JavaScript": "/svg/javaScript.svg",
+  "Python": "/svg/python.svg",
+  "CSS": "/svg/CSS3.svg",
+  "HTML": "/svg/HTML5.svg",
+  "Dart": "/svg/dart.svg",
+  "Swift": "/svg/swift.svg",
+  "Firebase": "/svg/firebase.svg",
+  "MongoDB": "/svg/mongodb.svg",
+  "CMake": "/svg/cmake.svg",
 };
 
 const useProjectsData = (): Project[] => {
@@ -152,16 +168,28 @@ const ProjectsLightbox: React.FC = () => {
           className="w-full max-w-4xl bg-[#0f0f0f] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl outline-none"
           tabIndex={-1}
         >
-          <div className="flex items-center justify-between p-4 border-b border-[#ffffff10]">
-            <div>
-              <h4 id="modal-title" className="text-2xl font-semibold">
+          <div className="flex items-start justify-between p-4 border-b border-[#ffffff10]">
+            <div className="flex-1 mr-4">
+              <h4 id="modal-title" className="text-2xl font-semibold mb-2">
                 {project.title}
               </h4>
-              <p id="modal-description" className="text-sm text-[var(--white-icon)]">
+              <p id="modal-description" className="text-sm text-[var(--white-icon)] mb-3">
                 {project.description}
               </p>
+              <div className="flex flex-wrap gap-2">
+                {project.technologies?.map((tech) => (
+                  <div key={tech} className="flex items-center gap-1.5 px-2 py-1 bg-[#1a1a1a] rounded-md border border-[var(--white-icon-tr)] text-xs text-[var(--white-icon)]">
+                    <img 
+                      src={techIcons[tech]}
+                      alt={tech}
+                      className="w-3 h-3 object-contain"
+                    />
+                    <span>{tech}</span>
+                  </div>
+                )) || []}
+              </div>
             </div>
-            <button onClick={close} aria-label="Cerrar" className="text-[var(--white-icon)] hover:text-[var(--white)] transition p-2">
+            <button onClick={close} aria-label="Cerrar" className="text-[var(--white-icon)] hover:text-[var(--white)] transition p-2 flex-shrink-0">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6"><path d="M18.3 5.71L12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.29 6.29 1.41-1.41-6.29-6.29 6.29-6.29-1.41-1.41z"/></svg>
             </button>
           </div>

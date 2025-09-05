@@ -12,6 +12,7 @@ interface ProjectData {
   folder: string;
   images: string[];
   cover: string | null;
+  technologies: string[];
   repoUrl?: string;
   demoUrl?: string;
 }
@@ -25,20 +26,38 @@ const rawProjects = [
     description:
       "Aplicación móvil y web para la gestión de préstamos de equipos de la Facultad de Comunicaciones de la Universidad Continental.",
     folder: "AppComu",
+    technologies: ["Dart", "C++", "CMake", "JavaScript", "Swift", "C", "Firebase"],
   },
   {
     title: "TravelEase",
     description:
       "Aplicación móvil para recomendación de rutas y medios de transporte en la ciudad de Huancayo.",
     folder: "TravelEase",
+    technologies: ["C++", "Dart", "CMake", "Swift", "C", "HTML", "Firebase"],
   },
   {
     title: "EvoFit",
     description:
       "Aplicación web para realizar ejercicios con reconocimiento de movimientos y chatbot con IA como entrenador.",
     folder: "EvoFit",
+    technologies: ["JavaScript", "Python", "CSS", "MongoDB"],
   },
 ];
+
+// Mapeo de tecnologías a íconos
+const techIcons: Record<string, string> = {
+  "C++": "/svg/C++.svg",
+  "C": "/svg/C.svg",
+  "JavaScript": "/svg/javaScript.svg",
+  "Python": "/svg/python.svg",
+  "CSS": "/svg/CSS3.svg",
+  "HTML": "/svg/HTML5.svg",
+  "Dart": "/svg/dart.svg",
+  "Swift": "/svg/swift.svg",
+  "Firebase": "/svg/firebase.svg",
+  "MongoDB": "/svg/mongodb.svg",
+  "CMake": "/svg/cmake.svg",
+};
 
 function readProjectImages(folder: string): string[] {
   try {
@@ -75,6 +94,7 @@ const projects: ProjectData[] = rawProjects
       ...p,
       images,
       cover: images.length > 0 ? images[0] : null,
+      technologies: p.technologies,
     } as ProjectData;
   })
   .filter((p) => p.images.length > 0);
@@ -118,9 +138,22 @@ const projects: ProjectData[] = rawProjects
               )}
               <div class="absolute inset-0 ring-0 group-hover:ring-2 ring-[var(--sec)] transition-all"></div>
             </div>
-            <div class="p-4 space-y-2">
+            <div class="p-4 space-y-3">
               <h4 class="text-xl font-semibold">{project.title}</h4>
               <p class="text-sm text-[var(--white-icon)]">{project.description}</p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                {project.technologies.map((tech) => (
+                  <div class="flex items-center gap-1.5 px-2 py-1 bg-[var(--card-hover)] rounded-lg border border-[var(--white-icon-tr)] text-xs text-[var(--white-icon)] hover:text-[var(--white)] hover:border-[var(--sec)] transition-colors">
+                    <img 
+                      src={techIcons[tech]} 
+                      alt={tech}
+                      class="w-4 h-4 object-contain"
+                      loading="lazy"
+                    />
+                    <span>{tech}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </button>
         ))
