@@ -1,7 +1,6 @@
 ---
 import ProjectsLightbox from "../React/ProjectsLightbox.tsx";
 import ProjectOrbits from "../React/ProjectOrbits.tsx";
-import { Image } from 'astro:assets';
 
 interface ProjectData {
   title: string;
@@ -147,7 +146,7 @@ const projects: ProjectData[] = rawProjects.map((p) => ({
         ))
       }
     </div>
-    <script type="application/json" id="projects-data" set:html={JSON.stringify(projects)}></script>
+    <script type="application/json" id="projects-data" is:inline set:html={JSON.stringify(projects)}></script>
     <ProjectsLightbox client:load />
 
   </div>
