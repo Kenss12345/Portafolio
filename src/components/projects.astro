@@ -1,9 +1,6 @@
 ---
 import ProjectsLightbox from "../React/ProjectsLightbox.tsx";
 import ProjectOrbits from "../React/ProjectOrbits.tsx";
-import { readdirSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
 import { Image } from 'astro:assets';
 
 interface ProjectData {
@@ -17,9 +14,6 @@ interface ProjectData {
   demoUrl?: string;
 }
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
-const publicDir = join(currentDir, "../../public");
-
 const rawProjects = [
   {
     title: "AppComu",
@@ -27,6 +21,18 @@ const rawProjects = [
       "Aplicación móvil y web para la gestión de préstamos de equipos de la Facultad de Comunicaciones de la Universidad Continental.",
     folder: "AppComu",
     technologies: ["Dart", "C++", "CMake", "JavaScript", "Swift", "C", "Firebase"],
+    images: [
+      "/AppComu/EquiposaCargo.png",
+      "/AppComu/EquiposDiponibles.png",
+      "/AppComu/PantalaGestor3.png",
+      "/AppComu/PantallaGestor1.png",
+      "/AppComu/PantallaGestor2.png",
+      "/AppComu/PantallaGestor4.png",
+      "/AppComu/Perfil.png",
+      "/AppComu/Solicitud1.png",
+      "/AppComu/Solicitud2.png",
+      "/AppComu/Solicitud3.png"
+    ],
   },
   {
     title: "TravelEase",
@@ -34,6 +40,15 @@ const rawProjects = [
       "Aplicación móvil para recomendación de rutas y medios de transporte en la ciudad de Huancayo.",
     folder: "TravelEase",
     technologies: ["C++", "Dart", "CMake", "Swift", "C", "HTML", "Firebase"],
+    images: [
+      "/TravelEase/Indicaciones.png",
+      "/TravelEase/IndicacionesExpandida.png",
+      "/TravelEase/Login.png",
+      "/TravelEase/MapaHuancayo.png",
+      "/TravelEase/PermisosUbicacion.png",
+      "/TravelEase/RutaRecomendada.png",
+      "/TravelEase/SeleccionPartidaLllegada.png"
+    ],
   },
   {
     title: "EvoFit",
@@ -41,6 +56,14 @@ const rawProjects = [
       "Aplicación web para realizar ejercicios con reconocimiento de movimientos y chatbot con IA como entrenador.",
     folder: "EvoFit",
     technologies: ["JavaScript", "Python", "CSS", "MongoDB"],
+    images: [
+      "/EvoFit/EvoFit1.png",
+      "/EvoFit/EvoFit2.png",
+      "/EvoFit/EvoFit3.png",
+      "/EvoFit/EvoFit4.png",
+      "/EvoFit/EvoFit5.png",
+      "/EvoFit/EvoFit6.png"
+    ],
   },
 ];
 
@@ -59,45 +82,10 @@ const techIcons: Record<string, string> = {
   "CMake": "/svg/cmake.svg",
 };
 
-function readProjectImages(folder: string): string[] {
-  try {
-    const root = join(publicDir, folder);
-    const exts = new Set([".png"]);
-    const out: string[] = [];
-
-    const walk = (dirAbs: string, relPath: string) => {
-      const entries = readdirSync(dirAbs, { withFileTypes: true });
-      for (const entry of entries) {
-        if (entry.isDirectory()) {
-          walk(join(dirAbs, entry.name), join(relPath, entry.name));
-        } else if (entry.isFile()) {
-          const nameLower = entry.name.toLowerCase();
-          const dot = nameLower.lastIndexOf(".");
-          const ext = dot >= 0 ? nameLower.slice(dot) : "";
-          if (ext && exts.has(ext)) {
-            out.push(`/${folder}/${relPath ? relPath + '/' : ''}${entry.name}`);
-          }
-        }
-      }
-    };
-    walk(root, "");
-    return out.sort();
-  } catch (err) {
-    return [];
-  }
-}
-
-const projects: ProjectData[] = rawProjects
-  .map((p) => {
-    const images = readProjectImages(p.folder);
-    return {
-      ...p,
-      images,
-      cover: images.length > 0 ? images[0] : null,
-      technologies: p.technologies,
-    } as ProjectData;
-  })
-  .filter((p) => p.images.length > 0);
+const projects: ProjectData[] = rawProjects.map((p) => ({
+  ...p,
+  cover: p.images.length > 0 ? p.images[0] : null,
+}));
 ---
 
 <section
