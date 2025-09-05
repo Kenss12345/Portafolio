@@ -4,6 +4,7 @@ import ProjectOrbits from "../React/ProjectOrbits.tsx";
 import { readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { Image } from 'astro:assets';
 
 interface ProjectData {
   title: string;
@@ -41,15 +42,27 @@ const rawProjects = [
 
 function readProjectImages(folder: string): string[] {
   try {
-    const full = join(publicDir, folder);
-    const files = readdirSync(full, { withFileTypes: true });
+    const root = join(publicDir, folder);
     const exts = new Set([".png"]);
-    return files
-      .filter((f) => f.isFile())
-      .map((f) => f.name)
-      .filter((name) => exts.has(name.toLowerCase().slice(name.lastIndexOf("."))))
-      .sort()
-      .map((name) => `/${folder}/${name}`);
+    const out: string[] = [];
+
+    const walk = (dirAbs: string, relPath: string) => {
+      const entries = readdirSync(dirAbs, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          walk(join(dirAbs, entry.name), join(relPath, entry.name));
+        } else if (entry.isFile()) {
+          const nameLower = entry.name.toLowerCase();
+          const dot = nameLower.lastIndexOf(".");
+          const ext = dot >= 0 ? nameLower.slice(dot) : "";
+          if (ext && exts.has(ext)) {
+            out.push(`/${folder}/${relPath ? relPath + '/' : ''}${entry.name}`);
+          }
+        }
+      }
+    };
+    walk(root, "");
+    return out.sort();
   } catch (err) {
     return [];
   }
@@ -85,13 +98,23 @@ const projects: ProjectData[] = rawProjects
             type="button"
             class={`group text-left rounded-2xl overflow-hidden border border-[var(--white-icon-tr)] bg-[var(--card)] hover:bg-[var(--card-hover)] transition duration-300 focus:outline-none project-card hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] hover:-translate-y-[2px] ${idx % 3 === 0 ? 'reveal' : idx % 3 === 1 ? 'reveal reveal-del-1' : 'reveal reveal-del-2'}`}
             data-index={idx}
+            data-project={JSON.stringify(project)}
             aria-haspopup="dialog"
             aria-label={`Abrir ${project.title}`}
-            onclick={`window.openProject && window.openProject(${idx})`}
+            onclick={`window.openProjectLightbox && window.openProjectLightbox(${idx})`}
           >
             <div class="relative">
               {project.cover && (
-                <img src={project.cover} alt={project.title} class="w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300" loading="lazy" />
+                <img
+                  src={project.cover}
+                  alt={`${project.title} – portada`}
+                  class="w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                  loading={idx < 2 ? "eager" : "lazy"}
+                  decoding="async"
+                  width="400"
+                  height="224"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
               )}
               <div class="absolute inset-0 ring-0 group-hover:ring-2 ring-[var(--sec)] transition-all"></div>
             </div>
@@ -103,7 +126,7 @@ const projects: ProjectData[] = rawProjects
         ))
       }
     </div>
-    <script type="application/json" id="projects-data">{JSON.stringify(projects)}</script>
+    <script type="application/json" id="projects-data" set:html={JSON.stringify(projects)}></script>
     <ProjectsLightbox client:load />
 
   </div>

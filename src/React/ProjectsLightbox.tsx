@@ -10,15 +10,36 @@ type Project = {
 
 const useProjectsData = (): Project[] => {
   const [data, setData] = useState<Project[]>([]);
+  
   useEffect(() => {
-    try {
-      const script = document.getElementById("projects-data");
-      const parsed = script ? (JSON.parse(script.textContent || "[]") as Project[]) : [];
-      setData(parsed);
-    } catch {
-      setData([]);
-    }
+    const loadData = () => {
+      try {
+        const script = document.getElementById("projects-data");
+        if (script && script.textContent) {
+          const parsed = JSON.parse(script.textContent) as Project[];
+          setData(parsed);
+        } else {
+          setData([]);
+        }
+      } catch (error) {
+        console.error('Error cargando datos de proyectos:', error);
+        setData([]);
+      }
+    };
+
+    // Intentar cargar inmediatamente
+    loadData();
+    
+    // Si no hay datos, intentar de nuevo después de un breve delay
+    const timeout = setTimeout(() => {
+      if (data.length === 0) {
+        loadData();
+      }
+    }, 100);
+
+    return () => clearTimeout(timeout);
   }, []);
+  
   return data;
 };
 
@@ -52,18 +73,39 @@ const ProjectsLightbox: React.FC = () => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const lastActiveRef = useRef<HTMLElement | null>(null);
 
-  useEffect(() => {
-    (window as any).openProject = (idx: number) => {
+  const openLightbox = (idx: number) => {
+    if (idx >= 0 && idx < projects.length) {
       lastActiveRef.current = document.activeElement as HTMLElement;
       setProjectIndex(idx);
       setImageIndex(0);
       setOpen(true);
       setTimeout(() => dialogRef.current?.focus(), 0);
-    };
+    }
+  };
+
+  // Exponer función globalmente para que los botones puedan llamarla
+  useEffect(() => {
+    (window as any).openProjectLightbox = openLightbox;
     return () => {
-      if ((window as any).openProject) delete (window as any).openProject;
+      delete (window as any).openProjectLightbox;
     };
-  }, []);
+  }, [projects]);
+
+  // Escucha de clics como fallback si el onclick inline no funciona
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as Element | null;
+      if (!target || !('closest' in target)) return;
+      const btn = (target as any).closest?.('button.project-card') as HTMLElement | null;
+      if (!btn) return;
+      const idxAttr = btn.getAttribute('data-index');
+      const idx = idxAttr ? Number(idxAttr) : NaN;
+      if (!Number.isFinite(idx)) return;
+      openLightbox(idx);
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, [projects]);
 
   useEffect(() => {
     if (!open) return;
