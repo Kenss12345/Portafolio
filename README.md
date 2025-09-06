@@ -12,7 +12,10 @@ Portafolio personal de **Kenss Lin Kadú Hilario Castro** - Desarrollador de Sof
 - TypeScript
 - Tailwind CSS
 
-The component `<LetterGlitch \>` was taken from [ReactBits.dev](https://www.reactbits.dev/)
+## **Credits & Attribution**
+- Original portfolio template by [Oscar Hernandez](https://github.com/gothsec) under MIT License
+- The component `<LetterGlitch \>` was taken from [ReactBits.dev](https://www.reactbits.dev/)
+- Personal content and modifications by Kenss Lin Kadú Hilario Castro
 
 ## **Stack**  
 ### **Frontend**  
@@ -56,12 +59,24 @@ git clone [tu-repositorio-url]
 ```  
 npm install
 ```
-3. Start the develpoment server:
+3. Start the development server:
 ```  
 npm run dev
 ```
 
-> **Important Notice:**  
-> This project is licensed under the [MIT License](https://opensource.org/licenses/mit).  
-> According to the license terms, any redistribution (including compiled or modified versions), you **must** retain the original copyright 
-> notice and the full license text. Copyright © 2025 Oscar Hernandez. All rights reserved.
+## **License & Legal Notice**
+
+This project is based on a template originally created by [Oscar Hernandez](https://github.com/gothsec) and is licensed under the [MIT License](https://opensource.org/licenses/mit).
+
+**Original Template Copyright:** © 2025 Oscar Hernandez  
+**Personal Content Copyright:** © 2025 Kenss Lin Kadú Hilario Castro
+
+**MIT License Requirements:**
+- The original copyright notice must be retained
+- The license text must be included in all copies
+- Attribution to the original author must be maintained
+
+**Usage:** You may use, modify, and distribute this code according to MIT License terms, provided you:
+1. Include the original copyright notice
+2. Include the license text
+3. Provide appropriate attribution
