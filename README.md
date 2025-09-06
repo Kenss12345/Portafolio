@@ -14,8 +14,14 @@ Portafolio personal de **Kenss Lin Kadú Hilario Castro** - Desarrollador de Sof
 
 ## **Credits & Attribution**
 - Original portfolio template by [Oscar Hernandez](https://github.com/gothsec) under MIT License
-- The component `<LetterGlitch \>` was taken from [ReactBits.dev](https://www.reactbits.dev/)
+- The component `<LetterGlitch />` was taken from [ReactBits.dev](https://www.reactbits.dev/)
+- Technology icons from various sources (see below)
 - Personal content and modifications by Kenss Lin Kadú Hilario Castro
+
+### **Icon Attributions**
+- Most technology icons are standard SVG representations or inspired by official logos
+- Icons created for: Dart, Firebase, Swift, MongoDB, CMake
+- Font: Montserrat from Google Fonts (SIL Open Font License)
 
 ## **Stack**  
 ### **Frontend**  
