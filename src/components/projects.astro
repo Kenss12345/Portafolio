@@ -1,85 +1,104 @@
 ---
-import { readdirSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
-
 interface ProjectData {
   title: string;
   description: string;
   folder: string;
   images: string[];
   cover: string | null;
+  technologies: string[];
   repoUrl?: string;
   demoUrl?: string;
 }
 
-const currentDir = dirname(fileURLToPath(import.meta.url));
-const publicDir = join(currentDir, "../../public");
-
-const rawProjects = [
+const projects: ProjectData[] = [
   {
     title: "AppComu",
     description:
       "Aplicación móvil y web para la gestión de préstamos de equipos de la Facultad de Comunicaciones de la Universidad Continental.",
     folder: "AppComu",
+    technologies: ["Dart", "C++", "CMake", "JavaScript", "Swift", "C", "Firebase"],
+    images: [
+      "/AppComu/EquiposaCargo.png",
+      "/AppComu/EquiposDiponibles.png",
+      "/AppComu/PantalaGestor3.png",
+      "/AppComu/PantallaGestor1.png",
+      "/AppComu/PantallaGestor2.png",
+      "/AppComu/PantallaGestor4.png",
+      "/AppComu/Perfil.png",
+      "/AppComu/Solicitud1.png",
+      "/AppComu/Solicitud2.png",
+      "/AppComu/Solicitud3.png"
+    ],
+    cover: "/AppComu/EquiposaCargo.png",
   },
   {
     title: "TravelEase",
     description:
       "Aplicación móvil para recomendación de rutas y medios de transporte en la ciudad de Huancayo.",
     folder: "TravelEase",
+    technologies: ["C++", "Dart", "CMake", "Swift", "C", "HTML", "Firebase"],
+    images: [
+      "/TravelEase/Indicaciones.png",
+      "/TravelEase/IndicacionesExpandida.png",
+      "/TravelEase/Login.png",
+      "/TravelEase/MapaHuancayo.png",
+      "/TravelEase/PermisosUbicacion.png",
+      "/TravelEase/RutaRecomendada.png",
+      "/TravelEase/SeleccionPartidaLllegada.png"
+    ],
+    cover: "/TravelEase/Indicaciones.png",
   },
   {
     title: "EvoFit",
     description:
       "Aplicación web para realizar ejercicios con reconocimiento de movimientos y chatbot con IA como entrenador.",
     folder: "EvoFit",
+    technologies: ["JavaScript", "Python", "CSS", "MongoDB"],
+    images: [
+      "/EvoFit/EvoFit1.png",
+      "/EvoFit/EvoFit2.png",
+      "/EvoFit/EvoFit3.png",
+      "/EvoFit/EvoFit4.png",
+      "/EvoFit/EvoFit5.png",
+      "/EvoFit/EvoFit6.png"
+    ],
+    cover: "/EvoFit/EvoFit1.png",
   },
 ];
 
-function readProjectImages(folder: string): string[] {
-  try {
-    const full = join(publicDir, folder);
-    const files = readdirSync(full, { withFileTypes: true });
-    const exts = new Set([".png"]);
-    return files
-      .filter((f) => f.isFile())
-      .map((f) => f.name)
-      .filter((name) => exts.has(name.toLowerCase().slice(name.lastIndexOf("."))))
-      .sort()
-      .map((name) => `/${folder}/${name}`);
-  } catch (err) {
-    return [];
-  }
-}
-
-const projects: ProjectData[] = rawProjects
-  .map((p) => {
-    const images = readProjectImages(p.folder);
-    return {
-      ...p,
-      images,
-      cover: images.length > 0 ? images[0] : null,
-    } as ProjectData;
-  })
-  .filter((p) => p.images.length > 0);
+// Mapeo de tecnologías a íconos
+const techIcons: Record<string, string> = {
+  "C++": "/svg/C++.svg",
+  "C": "/svg/C.svg",
+  "JavaScript": "/svg/javaScript.svg",
+  "Python": "/svg/python.svg",
+  "CSS": "/svg/CSS3.svg",
+  "HTML": "/svg/HTML5.svg",
+  "Dart": "/svg/dart.svg",
+  "Swift": "/svg/swift.svg",
+  "Firebase": "/svg/firebase.svg",
+  "MongoDB": "/svg/mongodb.svg",
+  "CMake": "/svg/cmake.svg",
+};
 ---
 
 <section
   id="projects"
   class="py-12 border-t border-[#ffffff10] text-[var(--white)]"
 >
-  <div class="max-w-5xl mx-auto">
-    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">Mi trabajo</h2>
-    <h3 class="text-4xl md:text-5xl font-medium mb-8">Proyectos</h3>
+  <div class="max-w-5xl mx-auto relative">
+    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec reveal">Mi trabajo</h2>
+    <h3 class="text-4xl md:text-5xl font-medium mb-8 reveal reveal-del-1">Proyectos</h3>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {
         projects.map((project, idx) => (
           <button
             type="button"
-            class="group text-left rounded-2xl overflow-hidden border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[#1a1a1a] transition duration-300 focus:outline-none project-card"
+            class={`group text-left rounded-2xl overflow-hidden border border-[var(--white-icon-tr)] bg-[var(--card)] hover:bg-[var(--card-hover)] transition duration-300 focus:outline-none project-card hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] hover:-translate-y-[2px] ${idx % 3 === 0 ? 'reveal' : idx % 3 === 1 ? 'reveal reveal-del-1' : 'reveal reveal-del-2'}`}
             data-index={idx}
+            aria-haspopup="dialog"
+            aria-label={`Abrir ${project.title}`}
           >
             <div class="relative">
               {project.cover && (
@@ -87,9 +106,22 @@ const projects: ProjectData[] = rawProjects
               )}
               <div class="absolute inset-0 ring-0 group-hover:ring-2 ring-[var(--sec)] transition-all"></div>
             </div>
-            <div class="p-4 space-y-2">
+            <div class="p-4 space-y-3">
               <h4 class="text-xl font-semibold">{project.title}</h4>
               <p class="text-sm text-[var(--white-icon)]">{project.description}</p>
+              <div class="flex flex-wrap gap-2 pt-1">
+                {project.technologies.map((tech) => (
+                  <div class="flex items-center gap-1.5 px-2 py-1 bg-[var(--card-hover)] rounded-lg border border-[var(--white-icon-tr)] text-xs text-[var(--white-icon)] hover:text-[var(--white)] hover:border-[var(--sec)] transition-colors">
+                    <img 
+                      src={techIcons[tech]} 
+                      alt={tech}
+                      class="w-4 h-4 object-contain"
+                      loading="lazy"
+                    />
+                    <span>{tech}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </button>
         ))
@@ -104,12 +136,13 @@ const projects: ProjectData[] = rawProjects
       <div id="modal-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
       <div class="relative h-full w-full flex items-center justify-center p-4">
         <div class="w-full max-w-4xl bg-[#0f0f0f] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl overflow-hidden">
-          <div class="flex items-center justify-between p-4 border-b border-[#ffffff10]">
-            <div>
-              <h4 id="modal-title" class="text-2xl font-semibold"></h4>
-              <p id="modal-description" class="text-sm text-[var(--white-icon)]"></p>
+          <div class="flex items-start justify-between p-4 border-b border-[#ffffff10]">
+            <div class="flex-1 mr-4">
+              <h4 id="modal-title" class="text-2xl font-semibold mb-2"></h4>
+              <p id="modal-description" class="text-sm text-[var(--white-icon)] mb-3"></p>
+              <div id="modal-technologies" class="flex flex-wrap gap-2"></div>
             </div>
-            <button id="modal-close" class="text-[var(--white-icon)] hover:text-[var(--white)] transition p-2" aria-label="Cerrar">
+            <button id="modal-close" class="text-[var(--white-icon)] hover:text-[var(--white)] transition p-2 flex-shrink-0" aria-label="Cerrar">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M18.3 5.71L12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.29 6.29 1.41-1.41-6.29-6.29 6.29-6.29-1.41-1.41z"/></svg>
             </button>
           </div>
@@ -141,7 +174,7 @@ const projects: ProjectData[] = rawProjects
       </div>
     </div>
 
-    <script type="application/json" id="projects-data">{JSON.stringify(projects)}</script>
+    <script type="application/json" id="projects-data" is:inline>{JSON.stringify(projects)}</script>
     <script>
       const modalEl = document.getElementById('projects-modal');
       const backdropEl = document.getElementById('modal-backdrop');
@@ -155,6 +188,7 @@ const projects: ProjectData[] = rawProjects
       const zoomInBtn = document.getElementById('modal-zoomin');
       const zoomOutBtn = document.getElementById('modal-zoomout');
       const thumbsEl = document.getElementById('modal-thumbs');
+      const techEl = document.getElementById('modal-technologies');
       const repoBtn = document.getElementById('modal-repo');
       const demoBtn = document.getElementById('modal-demo');
 
@@ -206,11 +240,39 @@ const projects: ProjectData[] = rawProjects
         }
       }
 
+      // Mapeo de tecnologías a íconos (igual que en el componente Astro)
+      const techIcons = {
+        "C++": "/svg/C++.svg",
+        "C": "/svg/C.svg",
+        "JavaScript": "/svg/javaScript.svg",
+        "Python": "/svg/python.svg",
+        "CSS": "/svg/CSS3.svg",
+        "HTML": "/svg/HTML5.svg",
+        "Dart": "/svg/dart.svg",
+        "Swift": "/svg/swift.svg",
+        "Firebase": "/svg/firebase.svg",
+        "MongoDB": "/svg/mongodb.svg",
+        "CMake": "/svg/cmake.svg",
+      };
+
+      function renderTechnologies(technologies) {
+        if (!techEl || !Array.isArray(technologies)) return;
+        techEl.innerHTML = technologies
+          .map(tech => `
+            <div class="flex items-center gap-1.5 px-2 py-1 bg-[#1a1a1a] rounded-md border border-[var(--white-icon-tr)] text-xs text-[var(--white-icon)]">
+              <img src="${techIcons[tech] || ''}" alt="${tech}" class="w-3 h-3 object-contain" />
+              <span>${tech}</span>
+            </div>
+          `)
+          .join('');
+      }
+
       function updateModal() {
         const p = projectsData[currentProjectIndex];
         if (!p) return;
         if (titleEl) titleEl.textContent = p.title;
         if (descEl) descEl.textContent = p.description;
+        renderTechnologies(p.technologies || []);
         const images = p.images || [];
         if (images.length === 0) return;
         currentImageIndex = Math.max(0, Math.min(currentImageIndex, images.length - 1));
