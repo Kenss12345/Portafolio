@@ -1,14 +1,7 @@
----
-import ContactWaves from "../React/ContactWaves.tsx";
----
-
 <section id="contact" class="w-full py-12 border-t border-[#ffffff10]">
   <div class="max-w-5xl mx-auto">
-    <div class="opacity-70 pointer-events-none">
-      <ContactWaves client:load />
-    </div>
-    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec reveal">Hablemos</h2>
-    <h3 class="text-4xl md:text-5xl font-medium text-[var(--white)] mb-6 reveal reveal-del-1">
+    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">Hablemos</h2>
+    <h3 class="text-4xl md:text-5xl font-medium text-[var(--white)] mb-6">
       Contacto
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -66,13 +59,12 @@ import ContactWaves from "../React/ContactWaves.tsx";
         </div>
       </div>
 
-      <div class="reveal">
+      <div>
         <form
           id="contact-form"
           action="https://formspree.io/f/xwplqrva"
           method="POST"
           class="flex flex-col gap-4"
-          aria-busy="false"
         >
           <input
             type="text"
@@ -97,8 +89,7 @@ import ContactWaves from "../React/ContactWaves.tsx";
           ></textarea>
           <button
             type="submit"
-            class="px-4 py-2 bg-[var(--white-icon-tr)] text-[var(--white)] rounded-lg opacity-60 transition-opacity border border-[var(--white-icon-tr)] hover:opacity-100 hover:bg-[var(--white-icon-tr)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sec)]"
-            id="contact-submit"
+            class="px-4 py-2 bg-[var(--white-icon-tr)] text-[var(--white)] rounded-lg opacity-60 transition-opacity border border-[var(--white-icon-tr)] hover:opacity-100 hover:bg-[var(--white-icon-tr)]"
           >
             Enviar
           </button>
@@ -106,8 +97,6 @@ import ContactWaves from "../React/ContactWaves.tsx";
         <div
           id="form-message"
           class="hidden justify-center items-center mt-4 text-[var(--white)] text-lg"
-          role="status"
-          aria-live="polite"
         >
           ✅ Gracias por tu mensaje!
         </div>
@@ -119,17 +108,10 @@ import ContactWaves from "../React/ContactWaves.tsx";
 <script type="module" is:inline>
   const form = document.getElementById("contact-form");
   const formMessage = document.getElementById("form-message");
-  const submitBtn = document.getElementById("contact-submit");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
-    form.setAttribute('aria-busy', 'true');
-    if (submitBtn instanceof HTMLButtonElement) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Enviando...';
-      submitBtn.style.opacity = '0.7';
-    }
 
     try {
       const response = await fetch(form.action, {
@@ -141,21 +123,14 @@ import ContactWaves from "../React/ContactWaves.tsx";
         form.reset();
         form.style.display = "none";
         formMessage.classList.remove("hidden");
-        form.removeAttribute('aria-busy');
       } else {
         const data = await response.json();
         console.error("Error response:", data);
-        alert("Hubo un problema al enviar tu mensaje.");
+        alert("There was a problem sending your message.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Hubo un problema al enviar tu mensaje.");
+      alert("There was a problem sending your message.");
     }
-    if (submitBtn instanceof HTMLButtonElement) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Enviar';
-      submitBtn.style.opacity = '';
-    }
-    form.removeAttribute('aria-busy');
   });
 </script>

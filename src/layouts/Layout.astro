@@ -49,9 +49,6 @@ const { title } = Astro.props;
     --white: #dfdfdf;
     --white-icon: #f3f3f398;
     --white-icon-tr: #f3f3f310;
-    --card: #1414149c;
-    --card-hover: #1a1a1a;
-    --ring: #ffffff10;
   }
 
   * {
@@ -68,18 +65,6 @@ const { title } = Astro.props;
   *::selection {
     background-color: var(--sec);
     color: var(--background);
-  }
-
-  /* Motion-safe animations utilities */
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      opacity: 0;
-      transform: translateY(8px);
-      animation: fadeInUp 700ms ease-out forwards;
-    }
-    .reveal-del-1 { animation-delay: 100ms; }
-    .reveal-del-2 { animation-delay: 200ms; }
-    .reveal-del-3 { animation-delay: 300ms; }
   }
 
   /* Scrollbar styles */
@@ -99,7 +84,7 @@ const { title } = Astro.props;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--sec);
+    background: var(--pink);
   }
 
   /* Scrollbar styles for Firefox */
@@ -107,7 +92,4 @@ const { title } = Astro.props;
     scrollbar-width: thin;
     scrollbar-color: var(--line) var(--container);
   }
-
-  /* Section spacing helpers */
-  section { scroll-margin-top: 96px; }
 </style>

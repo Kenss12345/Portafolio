@@ -24,9 +24,9 @@ const navItems: NavItem[] = [
 ];
 ---
 
-<div class="flex justify-center w-full reveal reveal-del-1">
+<div class="flex justify-center w-full">
   <nav
-    class="fixed flex left-0 right-0 z-[100] bg-[var(--card)] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all md:top-0 md:bottom-auto bottom-0 md:w-[36rem] rounded-t-2xl md:rounded-full md:mt-6 md:justify-self-center shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+    class="fixed flex left-0 right-0 z-[100] bg-[#1414149c] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all md:top-0 md:bottom-auto bottom-0 md:w-[33rem] rounded-t-2xl md:rounded-full md:mt-6 md:justify-self-center"
   >
     <div class="container mx-auto flex justify-center items-center p-3">
       <ul
@@ -37,8 +37,7 @@ const navItems: NavItem[] = [
             <li class="flex-1 md:flex-none">
               <a
                 href={item.href}
-                class="flex flex-col items-center gap-1 text-[var(--white-icon)] transition-colors text-xs md:text-base focus:outline-none focus-visible:text-white"
-                aria-current="false"
+                class="flex flex-col items-center gap-1 text-[var(--white-icon)] transition-colors text-xs md:text-base"
               >
                 <span class="md:hidden flex items-center justify-center w-6 h-6">
                   <fragment set:html={item.icon} />
@@ -77,12 +76,11 @@ const navItems: NavItem[] = [
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          navLinks.forEach((link) => { link.classList.remove("active"); link.removeAttribute('aria-current'); });
+          navLinks.forEach((link) => link.classList.remove("active"));
           const id = entry.target.getAttribute("id");
           const activeLink = document.querySelector(`nav a[href="#${id}"]`);
           if (activeLink) {
             activeLink.classList.add("active");
-            activeLink.setAttribute('aria-current', 'page');
           }
         }
       });
@@ -105,6 +103,5 @@ const navItems: NavItem[] = [
 
   nav a.active {
     color: white !important;
-    text-shadow: 0 0 12px rgba(164, 118, 255, 0.55);
   }
 </style>

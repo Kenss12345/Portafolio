@@ -1,6 +1,7 @@
 ---
-import ProjectsLightbox from "../React/ProjectsLightbox.tsx";
-import ProjectOrbits from "../React/ProjectOrbits.tsx";
+import { readdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
 interface ProjectData {
   title: string;
@@ -8,10 +9,12 @@ interface ProjectData {
   folder: string;
   images: string[];
   cover: string | null;
-  technologies: string[];
   repoUrl?: string;
   demoUrl?: string;
 }
+
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const publicDir = join(currentDir, "../../public");
 
 const rawProjects = [
   {
@@ -19,135 +22,274 @@ const rawProjects = [
     description:
       "Aplicación móvil y web para la gestión de préstamos de equipos de la Facultad de Comunicaciones de la Universidad Continental.",
     folder: "AppComu",
-    technologies: ["Dart", "C++", "CMake", "JavaScript", "Swift", "C", "Firebase"],
-    images: [
-      "/AppComu/EquiposaCargo.png",
-      "/AppComu/EquiposDiponibles.png",
-      "/AppComu/PantalaGestor3.png",
-      "/AppComu/PantallaGestor1.png",
-      "/AppComu/PantallaGestor2.png",
-      "/AppComu/PantallaGestor4.png",
-      "/AppComu/Perfil.png",
-      "/AppComu/Solicitud1.png",
-      "/AppComu/Solicitud2.png",
-      "/AppComu/Solicitud3.png"
-    ],
   },
   {
     title: "TravelEase",
     description:
       "Aplicación móvil para recomendación de rutas y medios de transporte en la ciudad de Huancayo.",
     folder: "TravelEase",
-    technologies: ["C++", "Dart", "CMake", "Swift", "C", "HTML", "Firebase"],
-    images: [
-      "/TravelEase/Indicaciones.png",
-      "/TravelEase/IndicacionesExpandida.png",
-      "/TravelEase/Login.png",
-      "/TravelEase/MapaHuancayo.png",
-      "/TravelEase/PermisosUbicacion.png",
-      "/TravelEase/RutaRecomendada.png",
-      "/TravelEase/SeleccionPartidaLllegada.png"
-    ],
   },
   {
     title: "EvoFit",
     description:
       "Aplicación web para realizar ejercicios con reconocimiento de movimientos y chatbot con IA como entrenador.",
     folder: "EvoFit",
-    technologies: ["JavaScript", "Python", "CSS", "MongoDB"],
-    images: [
-      "/EvoFit/EvoFit1.png",
-      "/EvoFit/EvoFit2.png",
-      "/EvoFit/EvoFit3.png",
-      "/EvoFit/EvoFit4.png",
-      "/EvoFit/EvoFit5.png",
-      "/EvoFit/EvoFit6.png"
-    ],
   },
 ];
 
-// Mapeo de tecnologías a íconos
-const techIcons: Record<string, string> = {
-  "C++": "/svg/C++.svg",
-  "C": "/svg/C.svg",
-  "JavaScript": "/svg/javaScript.svg",
-  "Python": "/svg/python.svg",
-  "CSS": "/svg/CSS3.svg",
-  "HTML": "/svg/HTML5.svg",
-  "Dart": "/svg/dart.svg",
-  "Swift": "/svg/swift.svg",
-  "Firebase": "/svg/firebase.svg",
-  "MongoDB": "/svg/mongodb.svg",
-  "CMake": "/svg/cmake.svg",
-};
+function readProjectImages(folder: string): string[] {
+  try {
+    const full = join(publicDir, folder);
+    const files = readdirSync(full, { withFileTypes: true });
+    const exts = new Set([".png"]);
+    return files
+      .filter((f) => f.isFile())
+      .map((f) => f.name)
+      .filter((name) => exts.has(name.toLowerCase().slice(name.lastIndexOf("."))))
+      .sort()
+      .map((name) => `/${folder}/${name}`);
+  } catch (err) {
+    return [];
+  }
+}
 
-const projects: ProjectData[] = rawProjects.map((p) => ({
-  ...p,
-  cover: p.images.length > 0 ? p.images[0] : null,
-}));
+const projects: ProjectData[] = rawProjects
+  .map((p) => {
+    const images = readProjectImages(p.folder);
+    return {
+      ...p,
+      images,
+      cover: images.length > 0 ? images[0] : null,
+    } as ProjectData;
+  })
+  .filter((p) => p.images.length > 0);
 ---
 
 <section
   id="projects"
   class="py-12 border-t border-[#ffffff10] text-[var(--white)]"
 >
-  <div class="max-w-5xl mx-auto relative">
-    <div class="absolute -top-10 right-0 left-0 pointer-events-none opacity-60">
-      <ProjectOrbits client:load />
-    </div>
-    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec reveal">Mi trabajo</h2>
-    <h3 class="text-4xl md:text-5xl font-medium mb-8 reveal reveal-del-1">Proyectos</h3>
+  <div class="max-w-5xl mx-auto">
+    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">Mi trabajo</h2>
+    <h3 class="text-4xl md:text-5xl font-medium mb-8">Proyectos</h3>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {
         projects.map((project, idx) => (
           <button
             type="button"
-            class={`group text-left rounded-2xl overflow-hidden border border-[var(--white-icon-tr)] bg-[var(--card)] hover:bg-[var(--card-hover)] transition duration-300 focus:outline-none project-card hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] hover:-translate-y-[2px] ${idx % 3 === 0 ? 'reveal' : idx % 3 === 1 ? 'reveal reveal-del-1' : 'reveal reveal-del-2'}`}
+            class="group text-left rounded-2xl overflow-hidden border border-[var(--white-icon-tr)] bg-[#1414149c] hover:bg-[#1a1a1a] transition duration-300 focus:outline-none project-card"
             data-index={idx}
-            data-project={JSON.stringify(project)}
-            aria-haspopup="dialog"
-            aria-label={`Abrir ${project.title}`}
-            onclick={`window.openProjectLightbox && window.openProjectLightbox(${idx})`}
           >
             <div class="relative">
               {project.cover && (
-                <img
-                  src={project.cover}
-                  alt={`${project.title} – portada`}
-                  class="w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                  loading={idx < 2 ? "eager" : "lazy"}
-                  decoding="async"
-                  width="400"
-                  height="224"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
+                <img src={project.cover} alt={project.title} class="w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300" loading="lazy" />
               )}
               <div class="absolute inset-0 ring-0 group-hover:ring-2 ring-[var(--sec)] transition-all"></div>
             </div>
-            <div class="p-4 space-y-3">
+            <div class="p-4 space-y-2">
               <h4 class="text-xl font-semibold">{project.title}</h4>
               <p class="text-sm text-[var(--white-icon)]">{project.description}</p>
-              <div class="flex flex-wrap gap-2 pt-1">
-                {project.technologies.map((tech) => (
-                  <div class="flex items-center gap-1.5 px-2 py-1 bg-[var(--card-hover)] rounded-lg border border-[var(--white-icon-tr)] text-xs text-[var(--white-icon)] hover:text-[var(--white)] hover:border-[var(--sec)] transition-colors">
-                    <img 
-                      src={techIcons[tech]} 
-                      alt={tech}
-                      class="w-4 h-4 object-contain"
-                      loading="lazy"
-                    />
-                    <span>{tech}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </button>
         ))
       }
     </div>
-    <script type="application/json" id="projects-data" is:inline set:html={JSON.stringify(projects)}></script>
-    <ProjectsLightbox client:load />
+
+    <div
+      id="projects-modal"
+      class="fixed inset-0 hidden z-50"
+      aria-hidden="true"
+    >
+      <div id="modal-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      <div class="relative h-full w-full flex items-center justify-center p-4">
+        <div class="w-full max-w-4xl bg-[#0f0f0f] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl overflow-hidden">
+          <div class="flex items-center justify-between p-4 border-b border-[#ffffff10]">
+            <div>
+              <h4 id="modal-title" class="text-2xl font-semibold"></h4>
+              <p id="modal-description" class="text-sm text-[var(--white-icon)]"></p>
+            </div>
+            <button id="modal-close" class="text-[var(--white-icon)] hover:text-[var(--white)] transition p-2" aria-label="Cerrar">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M18.3 5.71L12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.29 6.29 1.41-1.41-6.29-6.29 6.29-6.29-1.41-1.41z"/></svg>
+            </button>
+          </div>
+          <div class="relative">
+            <button id="modal-prev" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white" aria-label="Anterior">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <button id="modal-next" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-black/50 hover:bg-black/70 text-white" aria-label="Siguiente">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M8.59 16.59 10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+            </button>
+            <img id="modal-image" src="" alt="Proyecto" class="w-full h-[55vh] object-contain bg-black" />
+            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-[var(--white-icon)] bg-black/50 px-2 py-1 rounded-full"><span id="modal-counter">1 / 1</span></div>
+          </div>
+
+          <div class="p-4 border-t border-[#ffffff10] bg-[#0f0f0f]">
+            <div id="modal-thumbs" class="flex gap-2 overflow-x-auto"></div>
+          </div>
+
+          <div class="p-3 flex flex-wrap items-center justify-between gap-3 border-t border-[#ffffff10]">
+            <div class="text-xs text-[var(--white-icon)]">Usa las flechas o desliza para navegar</div>
+            <div class="flex flex-wrap gap-2">
+              <a id="modal-repo" href="#" target="_blank" rel="noopener noreferrer" class="hidden px-3 py-1 text-sm border border-[var(--white-icon-tr)] rounded-lg text-[var(--white-icon)] hover:text-white hover:bg-[var(--white-icon-tr)]">Ver repo</a>
+              <a id="modal-demo" href="#" target="_blank" rel="noopener noreferrer" class="hidden px-3 py-1 text-sm border border-[var(--white-icon-tr)] rounded-lg text-[var(--white-icon)] hover:text-white hover:bg-[var(--white-icon-tr)]">Ver demo</a>
+              <button id="modal-zoomout" class="px-3 py-1 text-sm border border-[var(--white-icon-tr)] rounded-lg text-[var(--white-icon)] hover:text-white hover:bg-[var(--white-icon-tr)]">Ajustar</button>
+              <button id="modal-zoomin" class="px-3 py-1 text-sm border border-[var(--white-icon-tr)] rounded-lg text-[var(--white-icon)] hover:text-white hover:bg-[var(--white-icon-tr)]">Ampliar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="application/json" id="projects-data">{JSON.stringify(projects)}</script>
+    <script>
+      const modalEl = document.getElementById('projects-modal');
+      const backdropEl = document.getElementById('modal-backdrop');
+      const titleEl = document.getElementById('modal-title');
+      const descEl = document.getElementById('modal-description');
+      const imgEl = document.getElementById('modal-image');
+      const counterEl = document.getElementById('modal-counter');
+      const closeBtn = document.getElementById('modal-close');
+      const prevBtn = document.getElementById('modal-prev');
+      const nextBtn = document.getElementById('modal-next');
+      const zoomInBtn = document.getElementById('modal-zoomin');
+      const zoomOutBtn = document.getElementById('modal-zoomout');
+      const thumbsEl = document.getElementById('modal-thumbs');
+      const repoBtn = document.getElementById('modal-repo');
+      const demoBtn = document.getElementById('modal-demo');
+
+      const dataScript = document.getElementById('projects-data');
+      const projectsData = dataScript ? JSON.parse(dataScript.textContent || '[]') : [];
+
+      let currentProjectIndex = 0;
+      let currentImageIndex = 0;
+
+      function renderThumbs(images) {
+        if (!thumbsEl) return;
+        if (!Array.isArray(images)) return;
+        thumbsEl.innerHTML = images
+          .map((src, i) => `
+            <button type="button" data-thumb-index="${i}" class="shrink-0 w-14 h-14 rounded-md overflow-hidden border ${i === currentImageIndex ? 'border-[var(--sec)]' : 'border-[var(--white-icon-tr)]'} hover:border-[var(--sec)] transition">
+              <img src="${src}" alt="thumb ${i + 1}" class="w-full h-full object-cover" loading="lazy" />
+            </button>
+          `)
+          .join('');
+        const buttons = Array.from(thumbsEl.querySelectorAll('[data-thumb-index]'));
+        buttons.forEach((b) => {
+          b.addEventListener('click', () => {
+            const idx = b.getAttribute('data-thumb-index');
+            const n = idx ? parseInt(idx, 10) : 0;
+            currentImageIndex = n;
+            updateModal();
+          });
+        });
+      }
+
+      function updateLinks(p) {
+        if (repoBtn) {
+          if (p && p.repoUrl) {
+            repoBtn.classList.remove('hidden');
+            repoBtn.setAttribute('href', p.repoUrl);
+          } else {
+            repoBtn.classList.add('hidden');
+            repoBtn.setAttribute('href', '#');
+          }
+        }
+        if (demoBtn) {
+          if (p && p.demoUrl) {
+            demoBtn.classList.remove('hidden');
+            demoBtn.setAttribute('href', p.demoUrl);
+          } else {
+            demoBtn.classList.add('hidden');
+            demoBtn.setAttribute('href', '#');
+          }
+        }
+      }
+
+      function updateModal() {
+        const p = projectsData[currentProjectIndex];
+        if (!p) return;
+        if (titleEl) titleEl.textContent = p.title;
+        if (descEl) descEl.textContent = p.description;
+        const images = p.images || [];
+        if (images.length === 0) return;
+        currentImageIndex = Math.max(0, Math.min(currentImageIndex, images.length - 1));
+        if (imgEl instanceof HTMLImageElement) {
+          imgEl.src = images[currentImageIndex];
+          imgEl.style.objectFit = 'contain';
+        }
+        if (counterEl) counterEl.textContent = `${currentImageIndex + 1} / ${images.length}`;
+        renderThumbs(images);
+        updateLinks(p);
+      }
+
+      function openModal(index) {
+        currentProjectIndex = index;
+        currentImageIndex = 0;
+        updateModal();
+        modalEl.classList.remove('hidden');
+        modalEl.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modalEl.classList.add('hidden');
+        modalEl.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      const cardButtons = Array.from(document.querySelectorAll('.project-card'));
+      cardButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const index = (btn instanceof HTMLElement && btn.dataset.index) ? parseInt(btn.dataset.index, 10) : -1;
+          if (index >= 0) openModal(index);
+        });
+      });
+
+      closeBtn.addEventListener('click', closeModal);
+      modalEl.addEventListener('click', (e) => {
+        if (e.target === backdropEl) {
+          closeModal();
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (modalEl.classList.contains('hidden')) return;
+        if (e.key === 'Escape') closeModal();
+        if (e.key === 'ArrowRight') { nextBtn.click(); }
+        if (e.key === 'ArrowLeft') { prevBtn.click(); }
+      });
+
+      prevBtn.addEventListener('click', () => {
+        const images = projectsData[currentProjectIndex]?.images || [];
+        if (images.length === 0) return;
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        updateModal();
+      });
+      nextBtn.addEventListener('click', () => {
+        const images = projectsData[currentProjectIndex]?.images || [];
+        if (images.length === 0) return;
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        updateModal();
+      });
+
+      zoomInBtn.addEventListener('click', () => {
+        if (imgEl instanceof HTMLImageElement) imgEl.style.objectFit = 'cover';
+      });
+      zoomOutBtn.addEventListener('click', () => {
+        if (imgEl instanceof HTMLImageElement) imgEl.style.objectFit = 'contain';
+      });
+
+      // Swipe para dispositivos táctiles
+      let startX = 0;
+      if (imgEl) imgEl.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+      if (imgEl) imgEl.addEventListener('touchend', (e) => {
+        const endX = e.changedTouches[0].clientX;
+        const dx = endX - startX;
+        if (Math.abs(dx) > 40) {
+          if (dx < 0) nextBtn.click(); else prevBtn.click();
+        }
+      });
+    </script>
 
   </div>
 </section>
