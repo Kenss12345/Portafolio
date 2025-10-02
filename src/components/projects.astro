@@ -174,7 +174,7 @@ const techIcons: Record<string, string> = {
       </div>
     </div>
 
-    <script type="application/json" id="projects-data" is:inline>{JSON.stringify(projects)}</script>
+    <script type="application/json" id="projects-data" is:inline set:html={JSON.stringify(projects)}></script>
     <script>
       // Esperamos a que el DOM esté completamente cargado
       document.addEventListener('DOMContentLoaded', function() {
