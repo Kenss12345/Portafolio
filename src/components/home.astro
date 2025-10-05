@@ -9,7 +9,7 @@ import SkillsList from "../React/SkillsList.tsx";
     <div class="text-left space-y-4">
 
       <div class="relative">
-        <div class="w-52 h-52 md:w-60 md:h-60 rounded-full border-4 border-[var(--sec)] shadow-xl">
+        <div class="w-52 h-52 md:w-60 md:h-60 rounded-full border-4 border-[var(--sec)] shadow-xl profile-roll-in">
           <img 
             src="/perfil.png" 
             alt="Kenss Hilario Castro"
@@ -18,13 +18,13 @@ import SkillsList from "../React/SkillsList.tsx";
         </div>
       </div>
 
-      <div>
+      <div class="content-fade-in">
         <p class="text-lg md:text-xl text-[var(--white-icon)] shiny-white">
           Hola, Soy Kenss Hilario
         </p>
       </div>
 
-      <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+      <div class="flex flex-col lg:flex-row lg:items-center gap-6 content-fade-in">
         <h1 class="text-[var(--white)] text-5xl md:text-6xl font-semibold leading-tight">
           Desarrollador <br> de Software JR
         </h1>
@@ -39,13 +39,13 @@ import SkillsList from "../React/SkillsList.tsx";
         </p>
       </div>
 
-      <div>
+      <div class="content-fade-in">
         <p class="text-lg md:text-xl text-[var(--white-icon)] shiny-white">
           Puedes visitar mi:
         </p>
       </div>
 
-      <div class="flex justify-start gap-2 pt-3 md:pt-0">
+      <div class="flex justify-start gap-2 pt-3 md:pt-0 content-fade-in">
         <a
           target="_blank"
           href="https://github.com/Kenss12345"
@@ -84,9 +84,11 @@ import SkillsList from "../React/SkillsList.tsx";
       </div>
     </div>
 
-    <LogoWall />
+    <div class="content-fade-in">
+      <LogoWall />
+    </div>
 
-    <div class="flex flex-col lg:flex-row items-center gap-8">
+    <div class="flex flex-col lg:flex-row items-center gap-8 content-fade-in">
       <SkillsList client:load />
       <div
         class="flex justify-center md:w-full md:h-[292px] size-[290px] pt-3 md:pt-9 md:ml-16"
@@ -103,4 +105,47 @@ import SkillsList from "../React/SkillsList.tsx";
     </div>
   </div>
 </section>
+
+<style>
+  /* Animación de rodar desde la izquierda */
+  @keyframes rollIn {
+    0% {
+      transform: translateX(-100vw) rotate(-720deg);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0) rotate(0deg);
+      opacity: 1;
+    }
+  }
+
+  /* Animación de aparición con desvanecimiento */
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Aplicar animación a la foto de perfil */
+  .profile-roll-in {
+    animation: rollIn 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* Aplicar animación al contenido (aparece después de la foto) */
+  .content-fade-in {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 1.6s;
+  }
+
+  /* Evitar overflow horizontal durante la animación */
+  #home {
+    overflow-x: hidden;
+  }
+</style>
 
