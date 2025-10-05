@@ -38,6 +38,11 @@ const { title } = Astro.props;
     <title>{title}</title>
   </head>
   <body class="bg-[--background] md:px-48 lg:px-20 px-9">
+    <!-- Cursor personalizado -->
+    <div id="cursor-dot" class="cursor-dot"></div>
+    <div id="cursor-outline" class="cursor-outline"></div>
+    <canvas id="cursor-trail-canvas"></canvas>
+    
     <slot />
   </body>
 </html>
@@ -182,6 +187,133 @@ const { title } = Astro.props;
     opacity: 1;
     transform: scale(1);
   }
+
+  /* ===== CURSOR PERSONALIZADO ===== */
+  
+  /* Ocultar cursor predeterminado */
+  body, body * {
+    cursor: none !important;
+  }
+
+  /* Permitir cursor en inputs y textareas para mejor UX */
+  input, textarea, select {
+    cursor: text !important;
+  }
+
+  /* Canvas para el rastro de partículas */
+  #cursor-trail-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* Punto central del cursor */
+  .cursor-dot {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: var(--sec);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transition: transform 0.15s ease, background-color 0.2s ease;
+    box-shadow: 0 0 10px rgba(164, 118, 255, 0.5);
+  }
+
+  /* Contorno del cursor */
+  .cursor-outline {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--sec);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.15s ease;
+    opacity: 0.5;
+  }
+
+  /* Estado hover en enlaces */
+  .cursor-dot.cursor-link {
+    transform: scale(1.5);
+    background: var(--white);
+  }
+
+  .cursor-outline.cursor-link {
+    width: 60px;
+    height: 60px;
+    opacity: 0.8;
+    border-color: var(--white);
+  }
+
+  /* Estado hover en botones */
+  .cursor-dot.cursor-button {
+    transform: scale(2);
+    background: var(--sec);
+  }
+
+  .cursor-outline.cursor-button {
+    width: 50px;
+    height: 50px;
+    border-width: 3px;
+    opacity: 1;
+  }
+
+  /* Estado en proyectos */
+  .cursor-dot.cursor-project {
+    transform: scale(1.8) rotate(45deg);
+    border-radius: 3px;
+    background: linear-gradient(135deg, var(--sec), #8a5dd6);
+  }
+
+  .cursor-outline.cursor-project {
+    width: 55px;
+    height: 55px;
+    border-radius: 10px;
+    transform: rotate(45deg);
+    border-width: 2px;
+    border-style: dashed;
+  }
+
+  /* Estado de clic - efecto ripple */
+  .cursor-ripple {
+    position: fixed;
+    border: 2px solid var(--sec);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9997;
+    animation: ripple-effect 0.6s ease-out;
+  }
+
+  @keyframes ripple-effect {
+    0% {
+      width: 10px;
+      height: 10px;
+      opacity: 1;
+    }
+    100% {
+      width: 100px;
+      height: 100px;
+      opacity: 0;
+    }
+  }
+
+  /* Ocultar cursor personalizado en móviles */
+  @media (max-width: 768px) {
+    .cursor-dot,
+    .cursor-outline,
+    #cursor-trail-canvas {
+      display: none;
+    }
+    
+    body, body * {
+      cursor: auto !important;
+    }
+  }
 </style>
 
 <script>
@@ -210,6 +342,222 @@ const { title } = Astro.props;
 
     elementsToReveal.forEach(element => {
       observer.observe(element);
+    });
+  });
+</script>
+
+<script>
+  // ===== CURSOR PERSONALIZADO CON EFECTOS =====
+  document.addEventListener('DOMContentLoaded', () => {
+    // Solo ejecutar en dispositivos no táctiles
+    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+      return;
+    }
+
+    const cursorDot = document.getElementById('cursor-dot');
+    const cursorOutline = document.getElementById('cursor-outline');
+    const canvas = document.getElementById('cursor-trail-canvas') as HTMLCanvasElement;
+    
+    if (!canvas || !cursorDot || !cursorOutline) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Configurar canvas
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Variables de posición
+    let mouseX = 0;
+    let mouseY = 0;
+    let outlineX = 0;
+    let outlineY = 0;
+
+    // Sistema de partículas para el rastro
+    interface ParticleType {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      life: number;
+      decay: number;
+      update(): void;
+      draw(): void;
+    }
+
+    class Particle implements ParticleType {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      life: number;
+      decay: number;
+
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.life = 1;
+        this.decay = Math.random() * 0.02 + 0.01;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life -= this.decay;
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(164, 118, 255, ${this.life * 0.5})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Efecto de brillo
+        ctx.fillStyle = `rgba(238, 229, 255, ${this.life * 0.3})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    const particles: Particle[] = [];
+    let particleTimer = 0;
+
+    // Actualizar posición del cursor
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      // Mover el punto central instantáneamente
+      if (cursorDot) {
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
+      }
+
+      // Crear partículas en el rastro
+      particleTimer++;
+      if (particleTimer % 2 === 0) {
+        particles.push(new Particle(mouseX, mouseY));
+      }
+    });
+
+    // Animación suave del contorno (efecto de seguimiento)
+    function animateOutline() {
+      outlineX += (mouseX - outlineX) * 0.15;
+      outlineY += (mouseY - outlineY) * 0.15;
+
+      if (cursorOutline) {
+        cursorOutline.style.left = outlineX + 'px';
+        cursorOutline.style.top = outlineY + 'px';
+      }
+
+      requestAnimationFrame(animateOutline);
+    }
+    animateOutline();
+
+    // Animar partículas
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw();
+
+        if (particles[i].life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Detectar tipo de elemento y cambiar cursor
+    function updateCursorState(element: EventTarget | null) {
+      if (!cursorDot || !cursorOutline || !(element instanceof HTMLElement)) return;
+
+      // Resetear clases
+      cursorDot.className = 'cursor-dot';
+      cursorOutline.className = 'cursor-outline';
+
+      // Verificar tipo de elemento
+      if (element.tagName === 'A' || element.closest('a')) {
+        cursorDot.classList.add('cursor-link');
+        cursorOutline.classList.add('cursor-link');
+      } else if (element.tagName === 'BUTTON' || element.closest('button')) {
+        const btn = element.tagName === 'BUTTON' ? element : element.closest('button');
+        if (btn && btn.classList.contains('project-card')) {
+          cursorDot.classList.add('cursor-project');
+          cursorOutline.classList.add('cursor-project');
+        } else {
+          cursorDot.classList.add('cursor-button');
+          cursorOutline.classList.add('cursor-button');
+        }
+      } else if (element.classList.contains('project-card') || element.closest('.project-card')) {
+        cursorDot.classList.add('cursor-project');
+        cursorOutline.classList.add('cursor-project');
+      }
+    }
+
+    // Listener para detectar hover sobre elementos
+    document.addEventListener('mouseover', (e) => {
+      updateCursorState(e.target);
+    });
+
+    // Efecto ripple al hacer click
+    document.addEventListener('click', (e) => {
+      const ripple = document.createElement('div');
+      ripple.className = 'cursor-ripple';
+      ripple.style.left = e.clientX + 'px';
+      ripple.style.top = e.clientY + 'px';
+      document.body.appendChild(ripple);
+
+      // Crear explosión de partículas al hacer click
+      for (let i = 0; i < 15; i++) {
+        particles.push(new Particle(e.clientX, e.clientY));
+      }
+
+      // Animación de escala en el click
+      if (cursorDot && cursorOutline) {
+        cursorDot.style.transform = 'scale(0.5)';
+        cursorOutline.style.transform = 'scale(1.5)';
+        
+        setTimeout(() => {
+          cursorDot.style.transform = '';
+          cursorOutline.style.transform = '';
+        }, 150);
+      }
+
+      // Remover ripple después de la animación
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    });
+
+    // Ajustar canvas al redimensionar ventana
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Ocultar cursor cuando sale de la ventana
+    document.addEventListener('mouseleave', () => {
+      if (cursorDot && cursorOutline) {
+        cursorDot.style.opacity = '0';
+        cursorOutline.style.opacity = '0';
+      }
+    });
+
+    document.addEventListener('mouseenter', () => {
+      if (cursorDot && cursorOutline) {
+        cursorDot.style.opacity = '1';
+        cursorOutline.style.opacity = '0.5';
+      }
     });
   });
 </script>
