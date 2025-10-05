@@ -2,10 +2,22 @@
 import LetterGlitch from "../React/LetterGlitch.tsx";
 import LogoWall from "../components/logoWall.astro";
 import SkillsList from "../React/SkillsList.tsx";
+import TechStack from "../React/TechStack.tsx";
+import BlogArticles from "../React/BlogArticles.tsx";
+import AchievementsGallery from "../React/AchievementsGallery.tsx";
 ---
 
-<section class="text-[var(--white)] mt-12 md:mt-0" id="home">
-  <div class="max-w-5xl mx-auto space-y-8 md:py-36 pb-14">
+<section class="text-[var(--white)] mt-12 md:mt-0 relative overflow-hidden" id="home">
+  <!-- Elementos de fondo con efecto parallax -->
+  <div class="parallax-bg-home">
+    <div class="parallax-shape-home parallax-shape-home-1" data-speed="0.2"></div>
+    <div class="parallax-shape-home parallax-shape-home-2" data-speed="0.4"></div>
+    <div class="parallax-circle-home parallax-circle-home-1" data-speed="0.5"></div>
+    <div class="parallax-dots parallax-dots-1" data-speed="0.3"></div>
+    <div class="parallax-dots parallax-dots-2" data-speed="0.45"></div>
+  </div>
+
+  <div class="max-w-5xl mx-auto space-y-8 md:py-36 pb-14 relative z-10">
     <div class="text-left space-y-4">
 
       <div class="relative">
@@ -103,6 +115,21 @@ import SkillsList from "../React/SkillsList.tsx";
         />
       </div>
     </div>
+
+    <!-- Stack Tecnológico Interactivo -->
+    <div class="content-fade-in pt-12">
+      <TechStack client:load />
+    </div>
+
+    <!-- Blog & Artículos -->
+    <div class="content-fade-in pt-12">
+      <BlogArticles client:load />
+    </div>
+
+    <!-- Galería de Logros -->
+    <div class="content-fade-in pt-12">
+      <AchievementsGallery client:load />
+    </div>
   </div>
 </section>
 
@@ -146,6 +173,144 @@ import SkillsList from "../React/SkillsList.tsx";
   /* Evitar overflow horizontal durante la animación */
   #home {
     overflow-x: hidden;
+  }
+
+  /* ===== EFECTOS PARALLAX EN HOME ===== */
+  .parallax-bg-home {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Formas geométricas para home */
+  .parallax-shape-home {
+    position: absolute;
+    border-radius: 50% 50% 50% 70% / 50% 50% 70% 60%;
+    opacity: 0.04;
+    background: linear-gradient(135deg, var(--sec), #b48eff);
+    filter: blur(50px);
+    will-change: transform;
+  }
+
+  .parallax-shape-home-1 {
+    width: 500px;
+    height: 500px;
+    top: -10%;
+    right: 5%;
+    animation: float-slow 25s ease-in-out infinite;
+  }
+
+  .parallax-shape-home-2 {
+    width: 350px;
+    height: 350px;
+    bottom: 15%;
+    left: -5%;
+    animation: float-slow 20s ease-in-out infinite reverse;
+  }
+
+  /* Círculo decorativo home */
+  .parallax-circle-home {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid var(--sec);
+    opacity: 0.06;
+    will-change: transform;
+  }
+
+  .parallax-circle-home-1 {
+    width: 300px;
+    height: 300px;
+    top: 50%;
+    left: -10%;
+    animation: rotate-slow 40s linear infinite;
+  }
+
+  /* Puntos decorativos */
+  .parallax-dots {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--sec);
+    border-radius: 50%;
+    opacity: 0.2;
+    will-change: transform;
+  }
+
+  .parallax-dots::before,
+  .parallax-dots::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--sec);
+    border-radius: 50%;
+  }
+
+  .parallax-dots::before {
+    top: 30px;
+    left: 40px;
+  }
+
+  .parallax-dots::after {
+    top: 60px;
+    left: -20px;
+  }
+
+  .parallax-dots-1 {
+    top: 20%;
+    right: 20%;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  .parallax-dots-2 {
+    bottom: 25%;
+    left: 15%;
+    animation: twinkle 4s ease-in-out infinite 1s;
+  }
+
+  /* Animaciones para home */
+  @keyframes float-slow {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+      transform: translate(20px, -20px) rotate(3deg);
+    }
+    66% {
+      transform: translate(-15px, 15px) rotate(-3deg);
+    }
+  }
+
+  @keyframes rotate-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes twinkle {
+    0%, 100% {
+      opacity: 0.2;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(1.5);
+    }
+  }
+
+  /* Ocultar en móviles */
+  @media (max-width: 768px) {
+    .parallax-bg-home {
+      display: none;
+    }
   }
 </style>
 

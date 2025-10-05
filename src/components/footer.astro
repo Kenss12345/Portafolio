@@ -95,6 +95,28 @@
     </div>
 
     <div class="mt-12 pt-8 border-t border-[#ffffff10] scroll-reveal" style="transition-delay: 0.3s;">
+      <!-- Contador de visitas -->
+      <div class="flex justify-center items-center gap-6 mb-6">
+        <div class="text-center">
+          <div class="flex items-center gap-2 justify-center mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[var(--sec)]">
+              <path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17ZM12 9C10.34 9 9 10.34 9 12C9 13.66 10.34 15 12 15C13.66 15 15 13.66 15 12C15 10.34 13.66 9 12 9Z"></path>
+            </svg>
+            <span class="text-[var(--white-icon)] text-sm">Visitas</span>
+          </div>
+          <div id="visit-counter" class="text-2xl font-bold text-[var(--sec)]">0</div>
+        </div>
+        <div class="text-center">
+          <div class="flex items-center gap-2 justify-center mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[var(--sec)]">
+              <path d="M2 21H22V19H20V5C20 3.89543 19.1046 3 18 3H6C4.89543 3 4 3.89543 4 5V19H2V21ZM6 5H18V19H14V11H10V19H6V5ZM8 7V9H10V7H8ZM14 7V9H16V7H14ZM8 11V13H10V11H8ZM14 11V13H16V11H14Z"></path>
+            </svg>
+            <span class="text-[var(--white-icon)] text-sm">Café consumido</span>
+          </div>
+          <div id="coffee-counter" class="text-2xl font-bold text-[var(--sec)]">☕ 0</div>
+        </div>
+      </div>
+      
       <p class="text-center text-sm text-[var(--white-icon)] space-y-2">
         <!-- MIT License - Original Template Attribution Required -->
         <span class="block sm:inline"

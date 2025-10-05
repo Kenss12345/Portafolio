@@ -1,5 +1,12 @@
-<section id="contact" class="w-full py-12 border-t border-[#ffffff10]">
-  <div class="max-w-5xl mx-auto">
+<section id="contact" class="w-full py-12 border-t border-[#ffffff10] relative overflow-hidden">
+  <!-- Elementos de fondo con efecto parallax -->
+  <div class="parallax-bg-contact">
+    <div class="parallax-shape-contact parallax-shape-contact-1" data-speed="0.35"></div>
+    <div class="parallax-shape-contact parallax-shape-contact-2" data-speed="0.25"></div>
+    <div class="parallax-circle-contact" data-speed="0.4"></div>
+  </div>
+
+  <div class="max-w-5xl mx-auto relative z-10">
     <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec scroll-reveal">Hablemos</h2>
     <h3 class="text-4xl md:text-5xl font-medium text-[var(--white)] mb-6 scroll-reveal" style="transition-delay: 0.1s;">
       Contacto
@@ -134,3 +141,82 @@
     }
   });
 </script>
+
+<style>
+  /* ===== EFECTOS PARALLAX EN CONTACTO ===== */
+  .parallax-bg-contact {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Formas para contacto */
+  .parallax-shape-contact {
+    position: absolute;
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    opacity: 0.03;
+    background: linear-gradient(135deg, var(--sec), #6a4a9f);
+    filter: blur(45px);
+    will-change: transform;
+  }
+
+  .parallax-shape-contact-1 {
+    width: 350px;
+    height: 350px;
+    top: 20%;
+    left: -5%;
+    animation: float-contact 22s ease-in-out infinite;
+  }
+
+  .parallax-shape-contact-2 {
+    width: 280px;
+    height: 280px;
+    bottom: 15%;
+    right: -3%;
+    animation: float-contact 18s ease-in-out infinite reverse;
+  }
+
+  /* Círculo decorativo contacto */
+  .parallax-circle-contact {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 2px solid var(--sec);
+    opacity: 0.05;
+    top: 50%;
+    right: 10%;
+    will-change: transform;
+    animation: rotate-contact 35s linear infinite;
+  }
+
+  @keyframes float-contact {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-25px) rotate(4deg);
+    }
+  }
+
+  @keyframes rotate-contact {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Ocultar en móviles */
+  @media (max-width: 768px) {
+    .parallax-bg-contact {
+      display: none;
+    }
+  }
+</style>

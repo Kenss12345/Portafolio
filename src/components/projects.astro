@@ -10,6 +10,24 @@ interface ProjectData {
   demoUrl?: string;
 }
 
+interface ProjectStats {
+  duration: string;
+  linesOfCode: string;
+  status: string;
+}
+
+interface ProjectData {
+  title: string;
+  description: string;
+  folder: string;
+  images: string[];
+  cover: string | null;
+  technologies: string[];
+  repoUrl?: string;
+  demoUrl?: string;
+  stats?: ProjectStats;
+}
+
 const projects: ProjectData[] = [
   {
     title: "AppComu",
@@ -17,6 +35,11 @@ const projects: ProjectData[] = [
       "Aplicación móvil y web para la gestión de préstamos de equipos de la Facultad de Comunicaciones de la Universidad Continental.",
     folder: "AppComu",
     technologies: ["Dart", "C++", "CMake", "JavaScript", "Swift", "C", "Firebase"],
+    stats: {
+      duration: "4 meses",
+      linesOfCode: "15K+",
+      status: "Producción"
+    },
     images: [
       "/AppComu/EquiposaCargo.png",
       "/AppComu/EquiposDiponibles.png",
@@ -37,6 +60,11 @@ const projects: ProjectData[] = [
       "Aplicación móvil para recomendación de rutas y medios de transporte en la ciudad de Huancayo.",
     folder: "TravelEase",
     technologies: ["C++", "Dart", "CMake", "Swift", "C", "HTML", "Firebase"],
+    stats: {
+      duration: "3 meses",
+      linesOfCode: "12K+",
+      status: "Completado"
+    },
     images: [
       "/TravelEase/Indicaciones.png",
       "/TravelEase/IndicacionesExpandida.png",
@@ -54,6 +82,11 @@ const projects: ProjectData[] = [
       "Aplicación web para realizar ejercicios con reconocimiento de movimientos y chatbot con IA como entrenador.",
     folder: "EvoFit",
     technologies: ["JavaScript", "Python", "CSS", "MongoDB"],
+    stats: {
+      duration: "2.5 meses",
+      linesOfCode: "8K+",
+      status: "En desarrollo"
+    },
     images: [
       "/EvoFit/EvoFit1.png",
       "/EvoFit/EvoFit2.png",
@@ -84,9 +117,21 @@ const techIcons: Record<string, string> = {
 
 <section
   id="projects"
-  class="py-12 border-t border-[#ffffff10] text-[var(--white)]"
+  class="py-12 border-t border-[#ffffff10] text-[var(--white)] relative overflow-hidden"
 >
-  <div class="max-w-5xl mx-auto relative">
+  <!-- Elementos de fondo con efecto parallax -->
+  <div class="parallax-bg">
+    <div class="parallax-shape parallax-shape-1" data-speed="0.3"></div>
+    <div class="parallax-shape parallax-shape-2" data-speed="0.5"></div>
+    <div class="parallax-shape parallax-shape-3" data-speed="0.2"></div>
+    <div class="parallax-shape parallax-shape-4" data-speed="0.4"></div>
+    <div class="parallax-circle parallax-circle-1" data-speed="0.6"></div>
+    <div class="parallax-circle parallax-circle-2" data-speed="0.35"></div>
+    <div class="parallax-line parallax-line-1" data-speed="0.25"></div>
+    <div class="parallax-line parallax-line-2" data-speed="0.45"></div>
+  </div>
+
+  <div class="max-w-5xl mx-auto relative z-10">
     <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec scroll-reveal">Mi trabajo</h2>
     <h3 class="text-4xl md:text-5xl font-medium mb-8 scroll-reveal" style="transition-delay: 0.1s;">Proyectos</h3>
 
@@ -118,6 +163,27 @@ const techIcons: Record<string, string> = {
             <div class="p-4 space-y-3">
               <h4 class="text-xl font-semibold">{project.title}</h4>
               <p class="text-sm text-[var(--white-icon)]">{project.description}</p>
+              
+              <!-- Estadísticas rápidas (visible en hover) -->
+              {project.stats && (
+                <div class="project-stats opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-3 pt-3 border-t border-[var(--white-icon-tr)]">
+                  <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-[var(--card-hover)] rounded-lg p-2">
+                      <div class="text-xs text-[var(--white-icon)] mb-1">Duración</div>
+                      <div class="text-sm font-semibold text-[var(--sec)]">{project.stats.duration}</div>
+                    </div>
+                    <div class="bg-[var(--card-hover)] rounded-lg p-2">
+                      <div class="text-xs text-[var(--white-icon)] mb-1">Código</div>
+                      <div class="text-sm font-semibold text-[var(--sec)]">{project.stats.linesOfCode}</div>
+                    </div>
+                    <div class="bg-[var(--card-hover)] rounded-lg p-2">
+                      <div class="text-xs text-[var(--white-icon)] mb-1">Estado</div>
+                      <div class="text-xs font-semibold text-[var(--sec)] truncate">{project.stats.status}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div class="flex flex-wrap gap-2 pt-1">
                 {project.technologies.map((tech) => (
                   <div class="flex items-center gap-1.5 px-2 py-1 bg-[var(--card-hover)] rounded-lg border border-[var(--white-icon-tr)] text-xs text-[var(--white-icon)] hover:text-[var(--white)] hover:border-[var(--sec)] transition-colors">
@@ -441,3 +507,207 @@ const techIcons: Record<string, string> = {
 
   </div>
 </section>
+
+<style>
+  /* ===== HOVER AVANZADO EN PROYECTOS ===== */
+  .project-card {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .project-card:hover {
+    transform: translateY(-8px) scale(1.02);
+  }
+
+  .project-card .carousel-container img {
+    transition: transform 0.4s ease;
+  }
+
+  .project-card:hover .carousel-container img {
+    transform: scale(1.05);
+  }
+
+  /* Efecto de brillo en hover */
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(164, 118, 255, 0.1),
+      transparent
+    );
+    transition: left 0.5s;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .project-card:hover::before {
+    left: 100%;
+  }
+
+  /* Animación de estadísticas */
+  .project-stats {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+  }
+
+  .project-card:hover .project-stats {
+    max-height: 200px;
+  }
+
+  /* ===== EFECTOS PARALLAX ===== */
+  .parallax-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Formas geométricas flotantes */
+  .parallax-shape {
+    position: absolute;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    opacity: 0.03;
+    background: linear-gradient(135deg, var(--sec), #8a5dd6);
+    filter: blur(40px);
+    will-change: transform;
+  }
+
+  .parallax-shape-1 {
+    width: 400px;
+    height: 400px;
+    top: 10%;
+    left: -10%;
+    animation: float 20s ease-in-out infinite;
+  }
+
+  .parallax-shape-2 {
+    width: 300px;
+    height: 300px;
+    top: 40%;
+    right: -5%;
+    animation: float 15s ease-in-out infinite reverse;
+  }
+
+  .parallax-shape-3 {
+    width: 500px;
+    height: 500px;
+    bottom: 10%;
+    left: 30%;
+    animation: float 25s ease-in-out infinite;
+  }
+
+  .parallax-shape-4 {
+    width: 250px;
+    height: 250px;
+    top: 60%;
+    right: 20%;
+    animation: float 18s ease-in-out infinite reverse;
+  }
+
+  /* Círculos decorativos */
+  .parallax-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid var(--sec);
+    opacity: 0.05;
+    will-change: transform;
+  }
+
+  .parallax-circle-1 {
+    width: 200px;
+    height: 200px;
+    top: 20%;
+    right: 15%;
+    animation: rotate 30s linear infinite, pulse 3s ease-in-out infinite;
+  }
+
+  .parallax-circle-2 {
+    width: 150px;
+    height: 150px;
+    bottom: 30%;
+    left: 10%;
+    animation: rotate 25s linear infinite reverse, pulse 4s ease-in-out infinite;
+  }
+
+  /* Líneas decorativas */
+  .parallax-line {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--sec), transparent);
+    opacity: 0.08;
+    will-change: transform;
+  }
+
+  .parallax-line-1 {
+    width: 60%;
+    top: 25%;
+    left: -20%;
+    transform: rotate(-15deg);
+    animation: slide 20s ease-in-out infinite;
+  }
+
+  .parallax-line-2 {
+    width: 50%;
+    bottom: 35%;
+    right: -15%;
+    transform: rotate(15deg);
+    animation: slide 25s ease-in-out infinite reverse;
+  }
+
+  /* Animaciones */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-30px) rotate(5deg);
+    }
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.05;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.08;
+    }
+  }
+
+  @keyframes slide {
+    0%, 100% {
+      transform: translateX(0) rotate(-15deg);
+    }
+    50% {
+      transform: translateX(30px) rotate(-15deg);
+    }
+  }
+
+  /* Ocultar en móviles para mejor performance */
+  @media (max-width: 768px) {
+    .parallax-bg {
+      display: none;
+    }
+  }
+</style>

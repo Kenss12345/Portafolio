@@ -43,6 +43,12 @@ const { title } = Astro.props;
     <div id="cursor-outline" class="cursor-outline"></div>
     <canvas id="cursor-trail-canvas"></canvas>
     
+    <!-- Partículas interactivas de fondo -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- Contenedor para efectos especiales (Easter Eggs) -->
+    <div id="easter-egg-container" class="fixed inset-0 pointer-events-none z-[9999]"></div>
+    
     <slot />
   </body>
 </html>
@@ -56,6 +62,27 @@ const { title } = Astro.props;
     --white-icon-tr: #f3f3f310;
     --card: #1414149c;
     --card-hover: #1a1a1a;
+  }
+
+  /* Light Theme */
+  [data-theme="light"] {
+    --background: #f5f5f5;
+    --sec: #7c4dff;
+    --white: #1a1a1a;
+    --white-icon: #4a4a4a;
+    --white-icon-tr: #00000010;
+    --card: #ffffffcc;
+    --card-hover: #f0f0f0;
+  }
+
+  /* Smooth transition between themes */
+  html {
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  body {
+    background-color: var(--background);
+    transition: background-color 0.5s ease;
   }
 
   * {
@@ -188,6 +215,37 @@ const { title } = Astro.props;
     transform: scale(1);
   }
 
+  /* ===== ANIMACIONES PARA TECH STACK ===== */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes growWidth {
+    from {
+      width: 0%;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
   /* ===== CURSOR PERSONALIZADO ===== */
   
   /* Ocultar cursor predeterminado */
@@ -209,6 +267,18 @@ const { title } = Astro.props;
     height: 100%;
     pointer-events: none;
     z-index: 9998;
+  }
+
+  /* Canvas de partículas de fondo */
+  #particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.8;
   }
 
   /* Punto central del cursor */
@@ -561,3 +631,603 @@ const { title } = Astro.props;
     });
   });
 </script>
+
+<script>
+  // ===== EFECTO PARALLAX EN SCROLL =====
+  document.addEventListener('DOMContentLoaded', () => {
+    // Solo ejecutar en escritorio
+    if (window.innerWidth <= 768) return;
+
+    const parallaxElements = document.querySelectorAll('[data-speed]');
+    
+    if (parallaxElements.length === 0) return;
+
+    let ticking = false;
+
+    function updateParallax() {
+      parallaxElements.forEach((element) => {
+        if (!(element instanceof HTMLElement)) return;
+        
+        const rect = element.getBoundingClientRect();
+        const speed = parseFloat(element.getAttribute('data-speed') || '0.5');
+        
+        // Solo aplicar parallax si el elemento está visible en viewport
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          // Calcular el desplazamiento basado en la posición del scroll
+          const scrolled = window.pageYOffset;
+          const elementTop = element.offsetTop;
+          const distance = scrolled - elementTop;
+          const movement = distance * speed;
+          
+          // Aplicar transformación
+          element.style.transform = `translateY(${movement}px)`;
+        }
+      });
+
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }
+
+    // Escuchar evento de scroll con throttling
+    window.addEventListener('scroll', requestTick, { passive: true });
+    
+    // Actualizar en la carga inicial
+    updateParallax();
+
+    // Actualizar al redimensionar
+    window.addEventListener('resize', () => {
+      if (window.innerWidth <= 768) {
+        // Resetear transforms en móvil
+        parallaxElements.forEach((element) => {
+          if (element instanceof HTMLElement) {
+            element.style.transform = '';
+          }
+        });
+      } else {
+        updateParallax();
+      }
+    });
+  });
+</script>
+
+<script>
+  // ===== PARTÍCULAS INTERACTIVAS DE FONDO =====
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('particles-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Configurar canvas
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    interface ParticleNode {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      radius: number;
+      update(): void;
+      draw(): void;
+    }
+
+    // Configuración
+    const particleCount = window.innerWidth < 768 ? 30 : 80;
+    const maxDistance = 150;
+    const mouseRadius = 200;
+    let mouseX = -1000;
+    let mouseY = -1000;
+
+    // Colores de la paleta
+    const colors = {
+      primary: 'rgba(164, 118, 255, 0.6)',   // morado principal
+      secondary: 'rgba(180, 142, 255, 0.4)', // morado claro
+      line: 'rgba(164, 118, 255, 0.15)'      // líneas
+    };
+
+    class Particle implements ParticleNode {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      radius: number;
+      baseRadius: number;
+
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.radius = Math.random() * 2 + 1;
+        this.baseRadius = this.radius;
+      }
+
+      update() {
+        // Movimiento normal
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Rebotar en los bordes
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        // Mantener dentro del canvas
+        this.x = Math.max(0, Math.min(canvas.width, this.x));
+        this.y = Math.max(0, Math.min(canvas.height, this.y));
+
+        // Reacción al mouse
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < mouseRadius) {
+          // Empujar partículas lejos del mouse
+          const force = (mouseRadius - distance) / mouseRadius;
+          const angle = Math.atan2(dy, dx);
+          this.vx -= Math.cos(angle) * force * 0.5;
+          this.vy -= Math.sin(angle) * force * 0.5;
+
+          // Aumentar tamaño cerca del mouse
+          this.radius = this.baseRadius * (1 + force);
+        } else {
+          // Volver al tamaño normal
+          this.radius += (this.baseRadius - this.radius) * 0.1;
+        }
+
+        // Limitar velocidad
+        const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+        if (speed > 2) {
+          this.vx = (this.vx / speed) * 2;
+          this.vy = (this.vy / speed) * 2;
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = colors.primary;
+        ctx.fill();
+
+        // Brillo interno
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = colors.secondary;
+        ctx.fill();
+      }
+    }
+
+    // Crear partículas
+    const particles: Particle[] = [];
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    // Conectar partículas cercanas
+    function connectParticles() {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < maxDistance) {
+            // Opacidad basada en distancia
+            const opacity = (1 - distance / maxDistance) * 0.5;
+            ctx.strokeStyle = `rgba(164, 118, 255, ${opacity})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Conectar mouse a partículas cercanas
+    function connectMouse() {
+      for (let i = 0; i < particles.length; i++) {
+        const dx = mouseX - particles[i].x;
+        const dy = mouseY - particles[i].y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < mouseRadius) {
+          const opacity = (1 - distance / mouseRadius) * 0.3;
+          ctx.strokeStyle = `rgba(180, 142, 255, ${opacity})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouseX, mouseY);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Animar
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Actualizar y dibujar partículas
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+
+      // Conectar partículas
+      connectParticles();
+
+      // Conectar mouse si está en pantalla
+      if (mouseX > 0 && mouseX < canvas.width && mouseY > 0 && mouseY < canvas.height) {
+        connectMouse();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // Seguir mouse
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    // Resetear posición del mouse cuando sale
+    document.addEventListener('mouseleave', () => {
+      mouseX = -1000;
+      mouseY = -1000;
+    });
+
+    // Ajustar canvas al redimensionar
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      // Reposicionar partículas si están fuera del canvas
+      particles.forEach(particle => {
+        particle.x = Math.min(particle.x, canvas.width);
+        particle.y = Math.min(particle.y, canvas.height);
+      });
+    });
+
+    // Iniciar animación
+    animate();
+  });
+</script>
+
+<script>
+  // ===== EASTER EGGS Y MICRO-INTERACCIONES =====
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('easter-egg-container');
+
+    // ===== 1. CONTADOR DE VISITAS ANIMADO =====
+    function animateCounter(elementId: string, target: number, suffix = '') {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+
+      let current = 0;
+      const increment = target / 50;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          element.textContent = suffix + Math.floor(target).toLocaleString();
+          clearInterval(timer);
+        } else {
+          element.textContent = suffix + Math.floor(current).toLocaleString();
+        }
+      }, 30);
+    }
+
+    // Incrementar y guardar contador de visitas
+    let visits = parseInt(localStorage.getItem('portfolio-visits') || '0');
+    visits++;
+    localStorage.setItem('portfolio-visits', visits.toString());
+    animateCounter('visit-counter', visits);
+
+    // Contador de café (número gracioso basado en visitas)
+    const coffeeCount = Math.floor(visits * 2.5 + 147);
+    animateCounter('coffee-counter', coffeeCount, '☕ ');
+
+    // ===== 2. KONAMI CODE (↑ ↑ ↓ ↓ ← → ← → B A) =====
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiIndex = 0;
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+      if (key === konamiCode[konamiIndex]) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+          activateKonamiEffect();
+          konamiIndex = 0;
+        }
+      } else {
+        konamiIndex = 0;
+      }
+    });
+
+    function activateKonamiEffect() {
+      // Crear efecto de confetti
+      if (!container) return;
+      
+      const colors = ['#a476ff', '#b48eff', '#8a5dd6', '#7c4dff', '#fff'];
+      
+      for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.style.position = 'absolute';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.top = '-10px';
+          confetti.style.width = '10px';
+          confetti.style.height = '10px';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+          confetti.style.animation = `confettiFall ${2 + Math.random() * 2}s ease-out forwards`;
+          container.appendChild(confetti);
+
+          setTimeout(() => confetti.remove(), 4000);
+        }, i * 30);
+      }
+
+      // Notificación
+      showNotification('🎉 ¡Konami Code Activado! ¡Confetti Mode!');
+    }
+
+    // ===== 3. DETECCIÓN DE NOMBRE =====
+    let typedText = '';
+    const secretName = 'kenss';
+
+    document.addEventListener('keypress', (e) => {
+      typedText += e.key.toLowerCase();
+      if (typedText.length > 10) {
+        typedText = typedText.slice(-10);
+      }
+
+      if (typedText.includes(secretName)) {
+        activateNameEasterEgg();
+        typedText = '';
+      }
+    });
+
+    function activateNameEasterEgg() {
+      // Crear efecto de estrellas púrpuras
+      if (!container) return;
+
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const star = document.createElement('div');
+          star.innerHTML = '⭐';
+          star.style.position = 'absolute';
+          star.style.left = Math.random() * 100 + '%';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.fontSize = (10 + Math.random() * 20) + 'px';
+          star.style.animation = 'starPulse 1s ease-out forwards';
+          star.style.filter = 'hue-rotate(270deg)';
+          container.appendChild(star);
+
+          setTimeout(() => star.remove(), 1000);
+        }, i * 20);
+      }
+
+      showNotification('✨ ¡Hola Kenss! Easter Egg Desbloqueado');
+    }
+
+    // ===== 4. NOTIFICACIÓN DE LOGROS =====
+    function showNotification(message: string) {
+      const notification = document.createElement('div');
+      notification.className = 'achievement-notification';
+      notification.innerHTML = `
+        <div class="achievement-content">
+          <div class="achievement-icon">🏆</div>
+          <div class="achievement-text">
+            <div class="achievement-title">Achievement Unlocked!</div>
+            <div class="achievement-message">${message}</div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.5s ease-out forwards';
+        setTimeout(() => notification.remove(), 500);
+      }, 3000);
+    }
+
+    // ===== 5. CLICK TRIPLE EN EL LOGO DEL NAV =====
+    let clickCount = 0;
+    let clickTimer: number | null = null;
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('#theme-toggle')) {
+        clickCount++;
+        if (clickTimer) clearTimeout(clickTimer);
+        
+        if (clickCount === 3) {
+          activateMatrixRain();
+          clickCount = 0;
+        }
+
+        clickTimer = window.setTimeout(() => {
+          clickCount = 0;
+        }, 1000);
+      }
+    });
+
+    function activateMatrixRain() {
+      if (!container) return;
+
+      const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン01';
+      
+      for (let i = 0; i < 20; i++) {
+        const column = document.createElement('div');
+        column.style.position = 'absolute';
+        column.style.left = Math.random() * 100 + '%';
+        column.style.top = '-100%';
+        column.style.color = '#a476ff';
+        column.style.fontSize = '20px';
+        column.style.fontFamily = 'monospace';
+        column.style.animation = `matrixFall ${3 + Math.random() * 2}s linear forwards`;
+        column.style.textShadow = '0 0 10px #a476ff';
+        
+        let text = '';
+        for (let j = 0; j < 20; j++) {
+          text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+        }
+        column.innerHTML = text;
+        
+        container.appendChild(column);
+        setTimeout(() => column.remove(), 5000);
+      }
+
+      showNotification('🎮 Matrix Mode Activated!');
+    }
+  });
+</script>
+
+<style>
+  /* Easter Eggs Animations */
+  @keyframes confettiFall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes starPulse {
+    0% {
+      transform: scale(0) rotate(0deg);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.5) rotate(180deg);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes matrixFall {
+    to {
+      transform: translateY(110vh);
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    to {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+  }
+
+  /* Achievement Notification */
+  .achievement-notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--card), var(--card-hover));
+    border: 2px solid var(--sec);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 10px 40px rgba(164, 118, 255, 0.3);
+    z-index: 10000;
+    animation: slideIn 0.5s ease-out;
+    max-width: 350px;
+  }
+
+  .achievement-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .achievement-icon {
+    font-size: 32px;
+    animation: bounce 0.5s ease-out infinite;
+  }
+
+  .achievement-text {
+    flex: 1;
+  }
+
+  .achievement-title {
+    font-weight: bold;
+    color: var(--sec);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .achievement-message {
+    color: var(--white);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  /* Achievement Unlock Notification */
+  .achievement-unlock-notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    background: linear-gradient(135deg, #a476ff, #8a5dd6);
+    border: 2px solid #b48eff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(164, 118, 255, 0.5);
+    z-index: 10000;
+    animation: slideIn 0.5s ease-out, pulse 2s ease-in-out infinite 0.5s;
+    text-align: center;
+    color: white;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+  }
+
+  /* Counter animation */
+  .counter-animate {
+    transition: all 0.3s ease-out;
+  }
+</style>
