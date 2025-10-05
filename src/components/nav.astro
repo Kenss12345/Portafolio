@@ -130,34 +130,52 @@ const navItems: NavItem[] = [
 
   document.addEventListener("DOMContentLoaded", () => {
     // Observar tanto secciones como divs con id que están en el nav
-    const sections = document.querySelectorAll("section[id], div[id='stack'], div[id='blog'], div[id='certificaciones']");
+    const sections = document.querySelectorAll("section[id='home'], section[id='projects'], section[id='contact'], div[id='stack'], div[id='blog'], div[id='certificaciones']");
     const navLinks = document.querySelectorAll("nav a[href^='#']");
-    const observerOptions = { 
-      threshold: 0.3,
-      rootMargin: '-20% 0px -20% 0px'
-    };
+    
+    // Usar un enfoque de scroll para detectar la sección más visible
+    let ticking = false;
 
-    const observerCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const id = entry.target.getAttribute("id");
-          const activeLink = document.querySelector(`nav a[href="#${id}"]`);
-          
-          if (activeLink) {
-            navLinks.forEach((link) => link.classList.remove("active"));
-            activeLink.classList.add("active");
-          }
+    function updateActiveNav() {
+      const scrollPosition = window.scrollY + 100; // Offset para el nav fijo
+
+      let currentSection = '';
+      
+      sections.forEach((section) => {
+        const sectionTop = (section as HTMLElement).offsetTop;
+        const sectionHeight = (section as HTMLElement).offsetHeight;
+        
+        if (scrollPosition >= sectionTop - 150 && scrollPosition < sectionTop + sectionHeight - 150) {
+          currentSection = section.getAttribute('id') || '';
         }
       });
-    };
 
-    const observer = new IntersectionObserver(
-      observerCallback,
-      observerOptions
-    );
-    sections.forEach((section) => {
-      if (section) observer.observe(section);
-    });
+      // Si estamos al inicio de la página, activar "Inicio"
+      if (window.scrollY < 100) {
+        currentSection = 'home';
+      }
+
+      if (currentSection) {
+        navLinks.forEach((link) => {
+          link.classList.remove("active");
+          if (link.getAttribute('href') === `#${currentSection}`) {
+            link.classList.add("active");
+          }
+        });
+      }
+
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        window.requestAnimationFrame(updateActiveNav);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', requestTick);
+    updateActiveNav(); // Llamada inicial
   });
 
   // ===== SOUND TOGGLE =====
