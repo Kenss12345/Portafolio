@@ -221,65 +221,68 @@ const AchievementsGallery = () => {
 
       {/* Modal Lightbox */}
       {selectedCert && (
-        <div 
-          className="fixed inset-0 z-[10100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm overflow-y-auto"
-          onClick={closeCertificate}
-        >
-          <div 
-            className="relative max-w-4xl w-full bg-[var(--background)] rounded-2xl overflow-hidden border-2 border-[var(--sec)] shadow-[0_0_50px_rgba(164,118,255,0.5)] my-8"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header con brillo */}
-            <div className="relative bg-gradient-to-r from-[var(--sec)] to-[#8a5dd6] p-4 md:p-6">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer"></div>
-              <div className="relative flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
-                  <div className="text-3xl md:text-5xl animate-bounce-slow flex-shrink-0">🏆</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xl md:text-2xl font-bold text-white mb-1 break-words">
-                      {selectedCert.title}
-                    </div>
-                    <div className="text-white/80 text-xs md:text-sm break-words">
-                      {selectedCert.category} • {new Date(selectedCert.date).toLocaleDateString('es-ES', { 
-                        year: 'numeric', 
-                        month: 'long'
-                      })}
+        <div className="fixed inset-0 z-[10100]" aria-hidden="false">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeCertificate}></div>
+          
+          {/* Contenedor centrado */}
+          <div className="relative h-full w-full flex items-center justify-center p-4">
+            <div className="w-full max-w-4xl bg-[#0f0f0f] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl overflow-hidden">
+              {/* Header */}
+              <div className="flex items-start justify-between p-4 border-b border-[#ffffff10]">
+                <div className="flex-1 mr-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="text-4xl animate-bounce-slow">🏆</div>
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-semibold mb-1 text-[var(--white)]">
+                        {selectedCert.title}
+                      </h2>
+                      <p className="text-sm text-[var(--white-icon)]">
+                        {selectedCert.category} • {new Date(selectedCert.date).toLocaleDateString('es-ES', { 
+                          year: 'numeric', 
+                          month: 'long'
+                        })}
+                      </p>
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={closeCertificate}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 hover:bg-red-500/30 text-white transition-all flex-shrink-0 z-10"
+                  className="text-[var(--white-icon)] hover:text-[var(--white)] transition p-2 flex-shrink-0"
                   aria-label="Cerrar"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path d="M12 10.586L16.95 5.636L18.364 7.05L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.05 18.364L5.636 16.95L10.586 12L5.636 7.05L7.05 5.636L12 10.586Z"/>
+                    <path d="M18.3 5.71L12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.29 6.29 1.41-1.41-6.29-6.29 6.29-6.29-1.41-1.41z"/>
                   </svg>
                 </button>
               </div>
-            </div>
 
-            {/* Imagen */}
-            <div className="relative">
-              <img 
-                src={selectedCert.image} 
-                alt={selectedCert.title}
-                className="w-full h-auto max-h-[60vh] object-contain bg-black/50"
-              />
-            </div>
+              {/* Imagen */}
+              <div className="relative bg-black">
+                <img 
+                  src={selectedCert.image} 
+                  alt={selectedCert.title}
+                  className="w-full h-[55vh] object-contain"
+                  style={{ minHeight: '400px' }}
+                />
+              </div>
 
-            {/* Descripción */}
-            <div className="p-6 bg-[var(--card)]">
-              <p className="text-[var(--white-icon)] text-center">
-                {selectedCert.description}
-              </p>
-              <div className="mt-4 flex justify-center gap-4">
-                <span className="px-4 py-2 bg-[var(--sec)] text-white rounded-full text-sm font-semibold">
-                  ✓ Verificado
-                </span>
-                <span className="px-4 py-2 bg-[var(--card-hover)] text-[var(--white)] rounded-full text-sm">
-                  ID: #{selectedCert.id.toString().padStart(6, '0')}
-                </span>
+              {/* Descripción */}
+              <div className="p-4 border-t border-[#ffffff10]">
+                <p className="text-[var(--white-icon)] text-center mb-4">
+                  {selectedCert.description}
+                </p>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <span className="px-4 py-2 bg-[var(--sec)] text-white rounded-lg text-sm font-semibold">
+                    ✓ Verificado
+                  </span>
+                  <span className="px-4 py-2 border border-[var(--white-icon-tr)] text-[var(--white)] rounded-lg text-sm">
+                    {selectedCert.category}
+                  </span>
+                  <span className="px-4 py-2 border border-[var(--white-icon-tr)] text-[var(--white-icon)] rounded-lg text-sm">
+                    ID: #{selectedCert.id.toString().padStart(6, '0')}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

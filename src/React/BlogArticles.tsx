@@ -177,20 +177,24 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
 
       {/* Modal de Artículo */}
       {selectedArticle && (
-        <div className="fixed inset-0 z-[10100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto">
+        <div className="fixed inset-0 z-[10100]" aria-hidden="false">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeArticle}></div>
+          
           {/* Barra de progreso de lectura */}
-          <div className="fixed top-0 left-0 right-0 h-1 bg-[var(--card)] z-[10102]">
+          <div className="fixed top-0 left-0 right-0 h-1 bg-[var(--card)] z-10">
             <div 
               className="h-full bg-gradient-to-r from-[var(--sec)] to-[#8a5dd6] transition-all duration-100"
               style={{ width: `${readProgress}%` }}
             />
           </div>
 
-          <div className="relative w-full max-w-4xl bg-[var(--background)] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl max-h-[85vh] overflow-hidden my-auto">
-            {/* Header */}
-            <div className="sticky top-0 bg-[var(--card)] backdrop-blur-lg border-b border-[var(--white-icon-tr)] p-4 md:p-6 z-10">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
+          {/* Contenedor centrado */}
+          <div className="relative h-full w-full flex items-center justify-center p-4">
+            <div className="w-full max-w-4xl bg-[#0f0f0f] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl overflow-hidden">
+              {/* Header */}
+              <div className="flex items-start justify-between p-4 border-b border-[#ffffff10]">
+                <div className="flex-1 mr-4">
                   <div className="flex gap-2 mb-3 flex-wrap">
                     {selectedArticle.tags.map(tag => (
                       <span key={tag} className="px-3 py-1 bg-[var(--sec)] text-white text-xs rounded-full">
@@ -198,45 +202,55 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
                       </span>
                     ))}
                   </div>
-                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--white)] mb-2 break-words">
+                  <h2 className="text-2xl font-semibold mb-2 text-[var(--white)]">
                     {selectedArticle.title}
                   </h2>
-                  <div className="flex flex-wrap items-center gap-3 text-xs md:text-sm text-[var(--white-icon)]">
-                    <span className="flex items-center gap-1">📅 {new Date(selectedArticle.date).toLocaleDateString('es-ES', { 
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--white-icon)]">
+                    <span>📅 {new Date(selectedArticle.date).toLocaleDateString('es-ES', { 
                       year: 'numeric', 
                       month: 'long', 
                       day: 'numeric' 
                     })}</span>
-                    <span className="flex items-center gap-1">⏱️ {selectedArticle.readTime} min</span>
-                    <span className="flex items-center gap-1">📊 {Math.round(readProgress)}%</span>
+                    <span>⏱️ {selectedArticle.readTime} min</span>
+                    <span>📊 {Math.round(readProgress)}%</span>
                   </div>
                 </div>
                 <button
                   onClick={closeArticle}
-                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-[var(--card-hover)] hover:bg-red-500/30 text-[var(--white-icon)] hover:text-white transition-all"
+                  className="text-[var(--white-icon)] hover:text-[var(--white)] transition p-2 flex-shrink-0"
                   aria-label="Cerrar"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path d="M12 10.586L16.95 5.636L18.364 7.05L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.05 18.364L5.636 16.95L10.586 12L5.636 7.05L7.05 5.636L12 10.586Z"/>
+                    <path d="M18.3 5.71L12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.29 6.29 1.41-1.41-6.29-6.29 6.29-6.29-1.41-1.41z"/>
                   </svg>
                 </button>
               </div>
-            </div>
 
-            {/* Contenido */}
-            <div 
-              className="p-4 md:p-6 overflow-y-auto"
-              style={{ maxHeight: 'calc(85vh - 140px)' }}
-              onScroll={handleScroll}
-            >
-              <img 
-                src={selectedArticle.image} 
-                alt={selectedArticle.title}
-                className="w-full h-64 object-cover rounded-xl mb-6"
-              />
-              <div className="prose prose-invert max-w-none">
-                <div className="text-[var(--white-icon)] text-base leading-relaxed whitespace-pre-line">
-                  {selectedArticle.content}
+              {/* Contenido con scroll */}
+              <div 
+                className="overflow-y-auto p-4"
+                style={{ maxHeight: '55vh', minHeight: '400px' }}
+                onScroll={handleScroll}
+              >
+                <img 
+                  src={selectedArticle.image} 
+                  alt={selectedArticle.title}
+                  className="w-full h-64 object-cover rounded-xl mb-6"
+                />
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-[var(--white-icon)] text-base leading-relaxed whitespace-pre-line">
+                    {selectedArticle.content}
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer con info adicional */}
+              <div className="p-3 flex items-center justify-between gap-3 border-t border-[#ffffff10]">
+                <div className="text-xs text-[var(--white-icon)]">
+                  Artículo escrito el {new Date(selectedArticle.date).toLocaleDateString('es-ES')}
+                </div>
+                <div className="text-xs text-[var(--sec)] font-semibold">
+                  {Math.round(readProgress)}% leído
                 </div>
               </div>
             </div>
