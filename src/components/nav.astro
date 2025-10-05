@@ -25,6 +25,9 @@ const navItems: NavItem[] = [
 ---
 
 <div class="flex justify-center w-full">
+  <!-- Barra de progreso de scroll -->
+  <div id="scroll-progress-bar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-[var(--sec)] via-[#c084ff] to-[var(--sec)] z-[101] transition-all duration-100" style="width: 0%"></div>
+  
   <nav
     class="fixed flex left-0 right-0 z-[100] bg-[#1414149c] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all md:top-0 md:bottom-auto bottom-0 md:w-[36rem] rounded-t-2xl md:rounded-full md:mt-6 md:justify-self-center"
   >
@@ -50,10 +53,25 @@ const navItems: NavItem[] = [
         }
       </ul>
       
+      <!-- Sound Toggle Button -->
+      <button
+        id="sound-toggle"
+        class="ml-auto md:ml-2 flex items-center justify-center w-10 h-10 rounded-full bg-[var(--card)] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-all duration-300"
+        aria-label="Toggle sound"
+        title="Activar/Desactivar sonidos"
+      >
+        <svg id="sound-on-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[var(--white-icon)] transition-all duration-300">
+          <path d="M5.88889 16H2C1.44772 16 1 15.5523 1 15V9C1 8.44772 1.44772 8 2 8H5.88889L11.1834 3.66815C11.3971 3.49329 11.7121 3.52479 11.887 3.73851C11.9601 3.82784 12 3.93971 12 4.05519V19.9448C12 20.221 11.7761 20.4448 11.5 20.4448C11.3845 20.4448 11.2726 20.4049 11.1834 20.3319L5.88889 16ZM20.4142 12L23.9497 15.5355L22.5355 16.9497L19 13.4142L15.4645 16.9497L14.0503 15.5355L17.5858 12L14.0503 8.46447L15.4645 7.05025L19 10.5858L22.5355 7.05025L23.9497 8.46447L20.4142 12Z"></path>
+        </svg>
+        <svg id="sound-off-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[var(--white-icon)] transition-all duration-300 hidden">
+          <path d="M5.88889 16H2C1.44772 16 1 15.5523 1 15V9C1 8.44772 1.44772 8 2 8H5.88889L11.1834 3.66815C11.3971 3.49329 11.7121 3.52479 11.887 3.73851C11.9601 3.82784 12 3.93971 12 4.05519V19.9448C12 20.221 11.7761 20.4448 11.5 20.4448C11.3845 20.4448 11.2726 20.4049 11.1834 20.3319L5.88889 16ZM18.8631 16.5911L17.4411 15.1691C18.3892 14.4376 19 13.2902 19 12C19 10.7098 18.3892 9.56239 17.4411 8.83089L18.8631 7.40889C20.1606 8.49723 21 10.1521 21 12C21 13.8479 20.1606 15.5028 18.8631 16.5911ZM21.8407 19.5683L20.4187 18.1463C22.1485 16.7014 23.25 14.4789 23.25 12C23.25 9.52115 22.1485 7.29865 20.4187 5.85371L21.8407 4.43171C24.0069 6.26428 25.25 9.01257 25.25 12C25.25 14.9874 24.0069 17.7357 21.8407 19.5683Z"></path>
+        </svg>
+      </button>
+      
       <!-- Theme Toggle Button -->
       <button
         id="theme-toggle"
-        class="ml-auto md:ml-4 flex items-center justify-center w-10 h-10 rounded-full bg-[var(--card)] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-all duration-300"
+        class="md:ml-2 flex items-center justify-center w-10 h-10 rounded-full bg-[var(--card)] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-all duration-300"
         aria-label="Toggle theme"
       >
         <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[var(--white-icon)] transition-all duration-300">
@@ -68,6 +86,17 @@ const navItems: NavItem[] = [
 </div>
 
 <script>
+  // Importar sistema de sonidos del objeto global
+  declare global {
+    interface Window {
+      portfolioSounds?: {
+        playClick: () => void;
+        playNavigation: () => void;
+        playHover: () => void;
+      };
+    }
+  }
+
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener("click", function (e) {
       e.preventDefault();
@@ -75,6 +104,8 @@ const navItems: NavItem[] = [
       const targetId = target.getAttribute("href")?.substring(1) || "";
       const targetElement = document.getElementById(targetId);
       if (targetElement) {
+        // Reproducir sonido de navegación
+        window.portfolioSounds?.playNavigation();
         targetElement.scrollIntoView({
           behavior: "smooth",
         });
@@ -107,6 +138,55 @@ const navItems: NavItem[] = [
     sections.forEach((section) => observer.observe(section));
   });
 
+  // ===== SOUND TOGGLE =====
+  document.addEventListener("DOMContentLoaded", () => {
+    const soundToggle = document.getElementById("sound-toggle");
+    const soundOnIcon = document.getElementById("sound-on-icon");
+    const soundOffIcon = document.getElementById("sound-off-icon");
+
+    // Check for saved sound preference or default to 'true'
+    const soundEnabled = localStorage.getItem("sound-enabled") !== "false";
+    
+    // Update icons based on current state
+    if (!soundEnabled) {
+      soundOnIcon?.classList.add("hidden");
+      soundOffIcon?.classList.remove("hidden");
+    }
+
+    soundToggle?.addEventListener("click", () => {
+      const newState = localStorage.getItem("sound-enabled") !== "false" ? "false" : "true";
+      localStorage.setItem("sound-enabled", newState);
+      
+      // Reproducir sonido de click
+      if (newState === "true") {
+        window.portfolioSounds?.playClick();
+      }
+
+      // Animate icons
+      if (newState === "false") {
+        soundOnIcon?.classList.add("scale-0");
+        setTimeout(() => {
+          soundOnIcon?.classList.add("hidden");
+          soundOffIcon?.classList.remove("hidden");
+          soundOffIcon?.classList.add("scale-100");
+        }, 150);
+      } else {
+        soundOffIcon?.classList.add("scale-0");
+        setTimeout(() => {
+          soundOffIcon?.classList.add("hidden");
+          soundOnIcon?.classList.remove("hidden");
+          soundOnIcon?.classList.add("scale-100");
+        }, 150);
+      }
+
+      // Reset animations after transition
+      setTimeout(() => {
+        soundOnIcon?.classList.remove("scale-0", "scale-100");
+        soundOffIcon?.classList.remove("scale-0", "scale-100");
+      }, 300);
+    });
+  });
+
   // ===== THEME TOGGLE =====
   document.addEventListener("DOMContentLoaded", () => {
     const themeToggle = document.getElementById("theme-toggle");
@@ -128,6 +208,9 @@ const navItems: NavItem[] = [
       const theme = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
       html.setAttribute("data-theme", theme);
       localStorage.setItem("theme", theme);
+      
+      // Reproducir sonido de click
+      window.portfolioSounds?.playClick();
 
       // Animate icons
       if (theme === "light") {
@@ -152,6 +235,22 @@ const navItems: NavItem[] = [
         moonIcon?.classList.remove("rotate-180", "scale-0", "rotate-0", "scale-100");
       }, 300);
     });
+  });
+
+  // ===== SCROLL PROGRESS BAR =====
+  document.addEventListener("DOMContentLoaded", () => {
+    const progressBar = document.getElementById("scroll-progress-bar");
+    
+    const updateProgressBar = () => {
+      const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = (window.scrollY / scrollTotal) * 100;
+      if (progressBar) {
+        progressBar.style.width = `${Math.min(scrollProgress, 100)}%`;
+      }
+    };
+
+    window.addEventListener("scroll", updateProgressBar);
+    updateProgressBar(); // Initial call
   });
 </script>
 

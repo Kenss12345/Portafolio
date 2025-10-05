@@ -49,6 +49,83 @@ const { title } = Astro.props;
     <!-- Contenedor para efectos especiales (Easter Eggs) -->
     <div id="easter-egg-container" class="fixed inset-0 pointer-events-none z-[9999]"></div>
     
+    <!-- Botón Back to Top con Cohete y Círculo de Progreso -->
+    <button 
+      id="back-to-top" 
+      class="fixed bottom-24 md:bottom-8 right-4 md:right-8 w-16 h-16 rounded-full bg-gradient-to-br from-[var(--sec)] to-[#8a5dd6] text-white shadow-lg opacity-0 pointer-events-none transition-all duration-300 hover:scale-110 z-[99] flex items-center justify-center group overflow-visible"
+      aria-label="Volver arriba"
+      title="Volver arriba"
+    >
+      <!-- Círculo de progreso (SVG) -->
+      <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+        <circle 
+          cx="50" 
+          cy="50" 
+          r="45" 
+          fill="none" 
+          stroke="rgba(255,255,255,0.2)" 
+          stroke-width="4"
+        />
+        <circle 
+          id="progress-circle" 
+          cx="50" 
+          cy="50" 
+          r="45" 
+          fill="none" 
+          stroke="white" 
+          stroke-width="4" 
+          stroke-linecap="round"
+          stroke-dasharray="283"
+          stroke-dashoffset="283"
+          style="transition: stroke-dashoffset 0.1s linear;"
+        />
+      </svg>
+      
+      <!-- Cohete simplificado y más visible -->
+      <div class="rocket-container relative z-10">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" class="w-10 h-10 rocket-icon transition-transform duration-300 relative z-10">
+          <!-- Cuerpo del cohete -->
+          <path d="M32 2 L28 14 L28 48 L36 48 L36 14 Z" fill="white" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          
+          <!-- Punta del cohete -->
+          <path d="M32 2 L24 14 L28 14 Z" fill="white"/>
+          <path d="M32 2 L40 14 L36 14 Z" fill="white"/>
+          
+          <!-- Ventana -->
+          <circle cx="32" cy="24" r="4" fill="#a476ff" opacity="0.8"/>
+          <circle cx="32" cy="24" r="2.5" fill="white" opacity="0.6"/>
+          
+          <!-- Aletas izquierda -->
+          <path d="M28 42 L20 52 L28 48 Z" fill="white" opacity="0.9"/>
+          
+          <!-- Aletas derecha -->
+          <path d="M36 42 L44 52 L36 48 Z" fill="white" opacity="0.9"/>
+          
+          <!-- Detalles del cuerpo -->
+          <rect x="30" y="32" width="4" height="2" fill="rgba(164,118,255,0.4)" rx="1"/>
+          <rect x="30" y="38" width="4" height="2" fill="rgba(164,118,255,0.4)" rx="1"/>
+        </svg>
+        
+        <!-- Llama del cohete (visible en hover y durante animación) -->
+        <div id="rocket-flame" class="rocket-flame absolute -bottom-5 left-1/2 -translate-x-1/2 w-4 h-5 opacity-0 group-hover:opacity-100 transition-opacity z-0">
+          <svg viewBox="0 0 24 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0C12 0 0 12 0 24C0 30 4 36 12 48C20 36 24 30 24 24C24 12 12 0 12 0Z" fill="url(#flame-gradient)"/>
+            <defs>
+              <linearGradient id="flame-gradient" x1="12" y1="0" x2="12" y2="48" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FFD700"/>
+                <stop offset="40%" stop-color="#FF8C00"/>
+                <stop offset="70%" stop-color="#FF4500"/>
+                <stop offset="100%" stop-color="#FF0000"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        
+        <!-- Partículas de humo/estrellas -->
+        <div id="rocket-particles" class="absolute inset-0 pointer-events-none"></div>
+      </div>
+    </button>
+    
     <slot />
   </body>
 </html>
@@ -628,6 +705,285 @@ const { title } = Astro.props;
         cursorDot.style.opacity = '1';
         cursorOutline.style.opacity = '0.5';
       }
+    });
+  });
+</script>
+
+<script>
+  // ===== SISTEMA DE SONIDOS UI (Web Audio API) =====
+  document.addEventListener('DOMContentLoaded', () => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+
+    // Clase para crear sonidos sintéticos
+    class SoundSynthesizer {
+      context: AudioContext;
+
+      constructor(context: AudioContext) {
+        this.context = context;
+      }
+
+      // Sonido de click (beep corto)
+      playClick() {
+        if (localStorage.getItem("sound-enabled") === "false") return;
+
+        const oscillator = this.context.createOscillator();
+        const gainNode = this.context.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.context.destination);
+
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.3, this.context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.1);
+
+        oscillator.start(this.context.currentTime);
+        oscillator.stop(this.context.currentTime + 0.1);
+      }
+
+      // Sonido de navegación (dos notas)
+      playNavigation() {
+        if (localStorage.getItem("sound-enabled") === "false") return;
+
+        const oscillator1 = this.context.createOscillator();
+        const oscillator2 = this.context.createOscillator();
+        const gainNode = this.context.createGain();
+
+        oscillator1.connect(gainNode);
+        oscillator2.connect(gainNode);
+        gainNode.connect(this.context.destination);
+
+        oscillator1.frequency.value = 600;
+        oscillator2.frequency.value = 800;
+        oscillator1.type = 'sine';
+        oscillator2.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.2, this.context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.2);
+
+        oscillator1.start(this.context.currentTime);
+        oscillator2.start(this.context.currentTime + 0.05);
+        oscillator1.stop(this.context.currentTime + 0.2);
+        oscillator2.stop(this.context.currentTime + 0.25);
+      }
+
+      // Sonido de hover (sutil)
+      playHover() {
+        if (localStorage.getItem("sound-enabled") === "false") return;
+
+        const oscillator = this.context.createOscillator();
+        const gainNode = this.context.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.context.destination);
+
+        oscillator.frequency.value = 400;
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.1, this.context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.05);
+
+        oscillator.start(this.context.currentTime);
+        oscillator.stop(this.context.currentTime + 0.05);
+      }
+    }
+
+    const soundSystem = new SoundSynthesizer(audioContext);
+
+    // Exponer el sistema de sonidos globalmente
+    (window as any).portfolioSounds = {
+      playClick: () => soundSystem.playClick(),
+      playNavigation: () => soundSystem.playNavigation(),
+      playHover: () => soundSystem.playHover(),
+    };
+
+    // Agregar sonidos a todos los botones
+    document.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('click', () => soundSystem.playClick());
+    });
+  });
+</script>
+
+<script>
+  // ===== BOTÓN BACK TO TOP CON CÍRCULO DE PROGRESO Y ANIMACIÓN DE COHETE =====
+  document.addEventListener('DOMContentLoaded', () => {
+    const backToTopButton = document.getElementById('back-to-top') as HTMLButtonElement;
+    const progressCircle = document.getElementById('progress-circle') as unknown as SVGCircleElement;
+    const rocketIcon = document.querySelector('.rocket-icon') as HTMLElement;
+    const rocketFlame = document.getElementById('rocket-flame') as HTMLElement;
+    const rocketParticles = document.getElementById('rocket-particles') as HTMLElement;
+    const rocketContainer = document.querySelector('.rocket-container') as HTMLElement;
+    const circumference = 283; // 2 * π * r (r=45)
+
+    if (!backToTopButton || !progressCircle) return;
+
+    // Función para actualizar el progreso del círculo y mostrar/ocultar el botón
+    function updateScrollProgress() {
+      const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = (window.scrollY / scrollTotal) * 100;
+      const offset = circumference - (scrollProgress / 100) * circumference;
+
+      progressCircle.style.strokeDashoffset = offset.toString();
+
+      // Mostrar botón después de scroll de 300px
+      if (window.scrollY > 300) {
+        backToTopButton.style.opacity = '1';
+        backToTopButton.style.pointerEvents = 'auto';
+        
+        // Animar cohete basado en velocidad de scroll (inclinación sutil)
+        if (rocketIcon) {
+          const rotation = Math.min(scrollProgress * 0.5, 5); // Máximo 5 grados
+          rocketIcon.style.transform = `rotate(-${rotation}deg)`;
+        }
+      } else {
+        backToTopButton.style.opacity = '0';
+        backToTopButton.style.pointerEvents = 'none';
+        if (rocketIcon) {
+          rocketIcon.style.transform = 'rotate(0deg)';
+        }
+      }
+    }
+
+    // Escuchar scroll
+    window.addEventListener('scroll', updateScrollProgress);
+    updateScrollProgress(); // Llamada inicial
+
+    // Click en el botón para volver arriba con animación de despegue
+    backToTopButton.addEventListener('click', () => {
+      // Reproducir sonido
+      (window as any).portfolioSounds?.playNavigation();
+
+      // Prevenir múltiples clicks
+      backToTopButton.style.pointerEvents = 'none';
+
+      // Mostrar llama inmediatamente
+      if (rocketFlame) {
+        rocketFlame.style.opacity = '1';
+        rocketFlame.style.height = '1.25rem'; // 20px reducido 40% = 12px (1.25rem)
+      }
+
+      // Crear partículas de humo/estrellas
+      if (rocketParticles) {
+        for (let i = 0; i < 12; i++) {
+          const particle = document.createElement('div');
+          particle.style.position = 'absolute';
+          particle.style.width = '4px';
+          particle.style.height = '4px';
+          particle.style.borderRadius = '50%';
+          particle.style.backgroundColor = i % 2 === 0 ? '#FFD700' : '#FF6B00';
+          particle.style.bottom = '-10px';
+          particle.style.left = '50%';
+          particle.style.transform = 'translate(-50%, 0)';
+          particle.style.opacity = '1';
+          particle.style.boxShadow = '0 0 8px currentColor';
+          
+          const angle = (Math.random() - 0.5) * 60;
+          const distance = 20 + Math.random() * 30;
+          
+          particle.animate([
+            { transform: 'translate(-50%, 0) scale(1)', opacity: 1 },
+            { 
+              transform: `translate(calc(-50% + ${Math.sin(angle * Math.PI / 180) * distance}px), ${Math.cos(angle * Math.PI / 180) * distance}px) scale(0)`,
+              opacity: 0 
+            }
+          ], {
+            duration: 400 + Math.random() * 300,
+            easing: 'ease-out'
+          });
+          
+          rocketParticles.appendChild(particle);
+          setTimeout(() => particle.remove(), 800);
+        }
+      }
+
+      // ANIMACIÓN DE DESPEGUE DEL COHETE
+      if (rocketContainer) {
+        // Fase 1: Preparación (0-100ms) - vibración
+        rocketContainer.animate([
+          { transform: 'translateX(0) translateY(0)' },
+          { transform: 'translateX(-2px) translateY(1px)' },
+          { transform: 'translateX(2px) translateY(-1px)' },
+          { transform: 'translateX(-1px) translateY(1px)' },
+          { transform: 'translateX(0) translateY(0)' }
+        ], {
+          duration: 100,
+          iterations: 1
+        });
+
+        // Fase 2: Despegue (100ms en adelante) - vuela hacia arriba y desaparece
+        setTimeout(() => {
+          const takeoffAnimation = rocketContainer.animate([
+            { 
+              transform: 'translateY(0) rotate(0deg) scale(1)',
+              opacity: 1
+            },
+            { 
+              transform: 'translateY(-20px) rotate(-5deg) scale(1.05)',
+              opacity: 1,
+              offset: 0.15
+            },
+            { 
+              transform: 'translateY(-100vh) rotate(-8deg) scale(0.8)',
+              opacity: 0.8,
+              offset: 0.7
+            },
+            { 
+              transform: 'translateY(-120vh) rotate(-10deg) scale(0.5)',
+              opacity: 0
+            }
+          ], {
+            duration: 1000,
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+          });
+
+          // Animar la llama durante el despegue
+          let flameAnimation: Animation | null = null;
+          if (rocketFlame) {
+            flameAnimation = rocketFlame.animate([
+              { height: '1.25rem', opacity: 1 },      // 12px - inicio
+              { height: '2rem', opacity: 1, offset: 0.3 },    // 24px - aceleración
+              { height: '2.25rem', opacity: 0.8, offset: 0.6 }, // 36px - máximo
+              { height: '1.5rem', opacity: 0 }        // 18px - desvanecimiento
+            ], {
+              duration: 1000,
+              easing: 'ease-out'
+            });
+          }
+
+          // Cuando termina la animación, reiniciar el cohete
+          takeoffAnimation.onfinish = () => {
+            // Cancelar animaciones para limpiar
+            takeoffAnimation.cancel();
+            if (flameAnimation) {
+              flameAnimation.cancel();
+            }
+            
+            // Resetear el cohete a su estado original
+            if (rocketContainer) {
+              rocketContainer.style.transform = 'translateY(0) rotate(0deg) scale(1)';
+              rocketContainer.style.opacity = '1';
+            }
+            if (rocketFlame) {
+              rocketFlame.style.opacity = '0';
+              rocketFlame.style.height = '1.25rem';
+            }
+            
+            // Re-habilitar el botón después de volver arriba
+            setTimeout(() => {
+              if (backToTopButton) {
+                backToTopButton.style.pointerEvents = 'auto';
+              }
+            }, 500);
+          };
+        }, 100);
+      }
+
+      // Scroll suave hacia arriba (sincronizado con la animación)
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     });
   });
 </script>
@@ -1229,5 +1585,81 @@ const { title } = Astro.props;
   /* Counter animation */
   .counter-animate {
     transition: all 0.3s ease-out;
+  }
+
+  /* ===== BACK TO TOP BUTTON ANIMATIONS ===== */
+  #back-to-top {
+    box-shadow: 
+      0 4px 15px rgba(164, 118, 255, 0.4),
+      0 0 0 0 rgba(164, 118, 255, 0);
+    animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 
+        0 4px 15px rgba(164, 118, 255, 0.4),
+        0 0 0 0 rgba(164, 118, 255, 0.4);
+    }
+    50% {
+      box-shadow: 
+        0 4px 20px rgba(164, 118, 255, 0.5),
+        0 0 0 15px rgba(164, 118, 255, 0);
+    }
+    100% {
+      box-shadow: 
+        0 4px 15px rgba(164, 118, 255, 0.4),
+        0 0 0 0 rgba(164, 118, 255, 0);
+    }
+  }
+
+  #back-to-top:hover .rocket-icon {
+    transform: rotate(-5deg) translateY(-2px);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
+  }
+
+  #back-to-top:active {
+    transform: scale(0.95);
+  }
+
+  /* Cohete - añadir brillo */
+  .rocket-icon {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    transition: all 0.3s ease;
+  }
+
+  /* Llama del cohete - animación de parpadeo */
+  .rocket-flame {
+    animation: flameFlicker 0.1s infinite alternate;
+  }
+
+  @keyframes flameFlicker {
+    0% {
+      transform: translateX(-50%) scaleY(1) scaleX(1);
+      opacity: 0.9;
+    }
+    100% {
+      transform: translateX(-50%) scaleY(1.3) scaleX(0.95);
+      opacity: 1;
+    }
+  }
+
+  /* Glow effect on hover - más intenso */
+  #back-to-top:hover {
+    box-shadow: 
+      0 0 35px rgba(164, 118, 255, 0.8), 
+      0 0 70px rgba(164, 118, 255, 0.4),
+      0 4px 20px rgba(164, 118, 255, 0.5);
+    animation: none;
+  }
+
+  /* Hacer el círculo de progreso más visible */
+  #progress-circle {
+    filter: drop-shadow(0 0 3px rgba(255,255,255,0.5));
+  }
+
+  /* Partículas */
+  #rocket-particles > div {
+    pointer-events: none;
   }
 </style>
