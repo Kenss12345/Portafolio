@@ -100,11 +100,19 @@ const techIcons: Record<string, string> = {
             aria-haspopup="dialog"
             aria-label={`Abrir ${project.title}`}
           >
-            <div class="relative">
-              {project.cover && (
-                <img src={project.cover} alt={project.title} class="w-full h-48 md:h-56 object-cover group-hover:scale-[1.02] transition-transform duration-300" loading="lazy" />
-              )}
-              <div class="absolute inset-0 ring-0 group-hover:ring-2 ring-[var(--sec)] transition-all"></div>
+            <div class="relative overflow-hidden">
+              <div class="carousel-container w-full h-48 md:h-56 relative" data-carousel-index={idx}>
+                {project.images.map((img, imgIdx) => (
+                  <img 
+                    src={img} 
+                    alt={`${project.title} - imagen ${imgIdx + 1}`} 
+                    class={`carousel-image absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out ${imgIdx === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'}`}
+                    loading="lazy"
+                    data-img-index={imgIdx}
+                  />
+                ))}
+              </div>
+              <div class="absolute inset-0 ring-0 group-hover:ring-2 ring-[var(--sec)] transition-all pointer-events-none"></div>
             </div>
             <div class="p-4 space-y-3">
               <h4 class="text-xl font-semibold">{project.title}</h4>
@@ -130,7 +138,7 @@ const techIcons: Record<string, string> = {
 
     <div
       id="projects-modal"
-      class="fixed inset-0 hidden z-50"
+      class="fixed inset-0 hidden z-[200]"
       aria-hidden="true"
     >
       <div id="modal-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
@@ -387,6 +395,46 @@ const techIcons: Record<string, string> = {
             }
           });
         }
+
+        // Carrusel automático para las tarjetas de proyectos
+        const carousels = document.querySelectorAll('.carousel-container');
+        const carouselIntervals = [];
+        
+        carousels.forEach((carousel, carouselIdx) => {
+          const images = carousel.querySelectorAll('.carousel-image');
+          if (images.length <= 1) return;
+          
+          let currentIndex = 0;
+          
+          const rotateImages = () => {
+            // Ocultar la imagen actual
+            images[currentIndex].classList.remove('opacity-100', 'translate-x-0');
+            images[currentIndex].classList.add('opacity-0', '-translate-x-full');
+            
+            // Calcular el siguiente índice
+            currentIndex = (currentIndex + 1) % images.length;
+            
+            // Preparar la siguiente imagen desde la derecha
+            images[currentIndex].classList.remove('-translate-x-full');
+            images[currentIndex].classList.add('translate-x-full');
+            
+            // Pequeño delay para permitir que el navegador procese el cambio
+            setTimeout(() => {
+              // Mostrar la siguiente imagen
+              images[currentIndex].classList.remove('opacity-0', 'translate-x-full');
+              images[currentIndex].classList.add('opacity-100', 'translate-x-0');
+            }, 50);
+          };
+          
+          // Iniciar el carrusel automático cada 3 segundos
+          const intervalId = setInterval(rotateImages, 3000);
+          carouselIntervals.push(intervalId);
+        });
+
+        // Limpiar intervalos cuando se cierra la página
+        window.addEventListener('beforeunload', () => {
+          carouselIntervals.forEach(id => clearInterval(id));
+        });
       }); // Cierre del DOMContentLoaded
     </script>
 
