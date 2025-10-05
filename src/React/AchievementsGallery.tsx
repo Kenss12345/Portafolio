@@ -222,24 +222,24 @@ const AchievementsGallery = () => {
       {/* Modal Lightbox */}
       {selectedCert && (
         <div 
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+          className="fixed inset-0 z-[10100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm overflow-y-auto"
           onClick={closeCertificate}
         >
           <div 
-            className="relative max-w-4xl w-full bg-[var(--background)] rounded-2xl overflow-hidden border-2 border-[var(--sec)] shadow-[0_0_50px_rgba(164,118,255,0.5)]"
+            className="relative max-w-4xl w-full bg-[var(--background)] rounded-2xl overflow-hidden border-2 border-[var(--sec)] shadow-[0_0_50px_rgba(164,118,255,0.5)] my-8"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header con brillo */}
-            <div className="relative bg-gradient-to-r from-[var(--sec)] to-[#8a5dd6] p-6">
+            <div className="relative bg-gradient-to-r from-[var(--sec)] to-[#8a5dd6] p-4 md:p-6">
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-shimmer"></div>
-              <div className="relative flex items-start justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="text-5xl animate-bounce-slow">🏆</div>
-                  <div>
-                    <div className="text-2xl font-bold text-white mb-1">
+              <div className="relative flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
+                  <div className="text-3xl md:text-5xl animate-bounce-slow flex-shrink-0">🏆</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xl md:text-2xl font-bold text-white mb-1 break-words">
                       {selectedCert.title}
                     </div>
-                    <div className="text-white/80 text-sm">
+                    <div className="text-white/80 text-xs md:text-sm break-words">
                       {selectedCert.category} • {new Date(selectedCert.date).toLocaleDateString('es-ES', { 
                         year: 'numeric', 
                         month: 'long'
@@ -249,9 +249,12 @@ const AchievementsGallery = () => {
                 </div>
                 <button
                   onClick={closeCertificate}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 hover:bg-red-500/30 text-white transition-all flex-shrink-0 z-10"
+                  aria-label="Cerrar"
                 >
-                  ✕
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path d="M12 10.586L16.95 5.636L18.364 7.05L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.05 18.364L5.636 16.95L10.586 12L5.636 7.05L7.05 5.636L12 10.586Z"/>
+                  </svg>
                 </button>
               </div>
             </div>

@@ -177,20 +177,20 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
 
       {/* Modal de Artículo */}
       {selectedArticle && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[10100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto">
           {/* Barra de progreso de lectura */}
-          <div className="fixed top-0 left-0 right-0 h-1 bg-[var(--card)] z-[10001]">
+          <div className="fixed top-0 left-0 right-0 h-1 bg-[var(--card)] z-[10102]">
             <div 
               className="h-full bg-gradient-to-r from-[var(--sec)] to-[#8a5dd6] transition-all duration-100"
               style={{ width: `${readProgress}%` }}
             />
           </div>
 
-          <div className="relative w-full max-w-4xl bg-[var(--background)] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl max-h-[90vh] overflow-hidden">
+          <div className="relative w-full max-w-4xl bg-[var(--background)] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl max-h-[85vh] overflow-hidden my-auto">
             {/* Header */}
-            <div className="sticky top-0 bg-[var(--card)] backdrop-blur-lg border-b border-[var(--white-icon-tr)] p-6 z-10">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
+            <div className="sticky top-0 bg-[var(--card)] backdrop-blur-lg border-b border-[var(--white-icon-tr)] p-4 md:p-6 z-10">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
                   <div className="flex gap-2 mb-3 flex-wrap">
                     {selectedArticle.tags.map(tag => (
                       <span key={tag} className="px-3 py-1 bg-[var(--sec)] text-white text-xs rounded-full">
@@ -198,32 +198,35 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
                       </span>
                     ))}
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-[var(--white)] mb-2">
+                  <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-[var(--white)] mb-2 break-words">
                     {selectedArticle.title}
                   </h2>
-                  <div className="flex items-center gap-4 text-sm text-[var(--white-icon)]">
-                    <span>📅 {new Date(selectedArticle.date).toLocaleDateString('es-ES', { 
+                  <div className="flex flex-wrap items-center gap-3 text-xs md:text-sm text-[var(--white-icon)]">
+                    <span className="flex items-center gap-1">📅 {new Date(selectedArticle.date).toLocaleDateString('es-ES', { 
                       year: 'numeric', 
                       month: 'long', 
                       day: 'numeric' 
                     })}</span>
-                    <span>⏱️ {selectedArticle.readTime} min de lectura</span>
-                    <span className="ml-auto">📊 {Math.round(readProgress)}% leído</span>
+                    <span className="flex items-center gap-1">⏱️ {selectedArticle.readTime} min</span>
+                    <span className="flex items-center gap-1">📊 {Math.round(readProgress)}%</span>
                   </div>
                 </div>
                 <button
                   onClick={closeArticle}
-                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-[var(--card-hover)] hover:bg-[var(--sec)] text-[var(--white-icon)] hover:text-white transition-all"
+                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-[var(--card-hover)] hover:bg-red-500/30 text-[var(--white-icon)] hover:text-white transition-all"
+                  aria-label="Cerrar"
                 >
-                  ✕
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                    <path d="M12 10.586L16.95 5.636L18.364 7.05L13.414 12L18.364 16.95L16.95 18.364L12 13.414L7.05 18.364L5.636 16.95L10.586 12L5.636 7.05L7.05 5.636L12 10.586Z"/>
+                  </svg>
                 </button>
               </div>
             </div>
 
             {/* Contenido */}
             <div 
-              className="p-6 overflow-y-auto"
-              style={{ maxHeight: 'calc(90vh - 180px)' }}
+              className="p-4 md:p-6 overflow-y-auto"
+              style={{ maxHeight: 'calc(85vh - 140px)' }}
               onScroll={handleScroll}
             >
               <img 

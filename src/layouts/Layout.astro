@@ -38,6 +38,33 @@ const { title } = Astro.props;
     <title>{title}</title>
   </head>
   <body class="bg-[--background] md:px-48 lg:px-20 px-9">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 z-[10000] bg-[var(--background)] flex items-center justify-center">
+      <div class="text-center space-y-8 px-6">
+        <!-- Logo animado -->
+        <div class="logo-container">
+          <svg class="w-32 h-32 mx-auto" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle class="logo-circle" cx="50" cy="50" r="45" stroke="var(--sec)" stroke-width="3" fill="none" opacity="0.2"/>
+            <circle class="logo-circle-animated" cx="50" cy="50" r="45" stroke="var(--sec)" stroke-width="3" fill="none" stroke-dasharray="283" stroke-dashoffset="283"/>
+            <text x="50" y="60" text-anchor="middle" fill="var(--sec)" font-size="40" font-weight="bold" class="logo-text">K</text>
+          </svg>
+        </div>
+        
+        <!-- Frase motivacional -->
+        <div class="h-16">
+          <p id="loading-phrase" class="text-[var(--white-icon)] text-lg md:text-xl italic fade-in-out"></p>
+        </div>
+        
+        <!-- Progress bar -->
+        <div class="max-w-md mx-auto space-y-2">
+          <div class="h-2 bg-[var(--card)] rounded-full overflow-hidden">
+            <div id="loading-progress" class="h-full bg-gradient-to-r from-[var(--sec)] to-[#c084ff] rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+          <p id="loading-percentage" class="text-[var(--sec)] font-bold text-center text-sm">0%</p>
+        </div>
+      </div>
+    </div>
+    
     <!-- Cursor personalizado -->
     <div id="cursor-dot" class="cursor-dot"></div>
     <div id="cursor-outline" class="cursor-outline"></div>
@@ -462,6 +489,102 @@ const { title } = Astro.props;
     }
   }
 </style>
+
+<script>
+  // ===== LOADING SCREEN CREATIVO =====
+  (function() {
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingProgress = document.getElementById('loading-progress');
+    const loadingPercentage = document.getElementById('loading-percentage');
+    const loadingPhrase = document.getElementById('loading-phrase');
+
+    const phrases = [
+      "Si puedes imaginarlo, puedes programarlo",
+      "El código limpio siempre parece haber sido escrito por alguien que se preocupa",
+      "Primero resuelve el problema, luego escribe el código",
+      "El mejor código es el que no necesitas escribir",
+      "Los errores son pruebas de que lo estás intentando",
+      "Café + Código = Magia ✨",
+      "Depurar es como ser un detective en una película donde tú eres el asesino",
+      "El código funciona, no sé por qué... mejor no lo toques",
+      "Programar es el arte de decirle a otro humano lo que quieres que la computadora haga"
+    ];
+
+    let progress = 0;
+    let phraseIndex = 0;
+
+    // Mostrar frase inicial
+    if (loadingPhrase) {
+      loadingPhrase.textContent = phrases[0];
+    }
+
+    // Función para actualizar el progreso
+    function updateProgress() {
+      progress += Math.random() * 15 + 5; // Incremento aleatorio entre 5 y 20
+      
+      if (progress >= 100) {
+        progress = 100;
+        if (loadingProgress) loadingProgress.style.width = '100%';
+        if (loadingPercentage) loadingPercentage.textContent = '100%';
+        
+        // Ocultar loading screen con fade out
+        setTimeout(() => {
+          if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            loadingScreen.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => {
+              if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+              }
+            }, 500);
+          }
+        }, 300);
+      } else {
+        if (loadingProgress) loadingProgress.style.width = progress + '%';
+        if (loadingPercentage) loadingPercentage.textContent = Math.floor(progress) + '%';
+        
+        // Cambiar frase cada 30% aproximadamente
+        const newPhraseIndex = Math.floor(progress / 30);
+        if (newPhraseIndex !== phraseIndex && newPhraseIndex < phrases.length) {
+          phraseIndex = newPhraseIndex;
+          if (loadingPhrase) {
+            loadingPhrase.style.opacity = '0';
+            setTimeout(() => {
+              if (loadingPhrase) {
+                loadingPhrase.textContent = phrases[phraseIndex];
+                loadingPhrase.style.opacity = '1';
+              }
+            }, 300);
+          }
+        }
+        
+        // Continuar cargando
+        setTimeout(updateProgress, Math.random() * 200 + 100);
+      }
+    }
+
+    // Iniciar carga después de un momento
+    setTimeout(updateProgress, 500);
+
+    // Forzar carga completa después de 3 segundos como máximo
+    setTimeout(() => {
+      if (progress < 100) {
+        progress = 100;
+        if (loadingProgress) loadingProgress.style.width = '100%';
+        if (loadingPercentage) loadingPercentage.textContent = '100%';
+        setTimeout(() => {
+          if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            loadingScreen.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => {
+              if (loadingScreen) loadingScreen.style.display = 'none';
+            }, 500);
+          }
+        }, 300);
+      }
+    }, 3000);
+  })();
+</script>
 
 <script>
   // Intersection Observer para animaciones de scroll
@@ -1661,5 +1784,73 @@ const { title } = Astro.props;
   /* Partículas */
   #rocket-particles > div {
     pointer-events: none;
+  }
+
+  /* ===== LOADING SCREEN ===== */
+  #loading-screen {
+    backdrop-filter: blur(10px);
+  }
+
+  .logo-container {
+    animation: float-logo 3s ease-in-out infinite;
+  }
+
+  @keyframes float-logo {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .logo-circle-animated {
+    animation: draw-circle 2s ease-in-out infinite;
+  }
+
+  @keyframes draw-circle {
+    0% {
+      stroke-dashoffset: 283;
+      transform: rotate(0deg);
+      transform-origin: center;
+    }
+    50% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: 283;
+      transform: rotate(360deg);
+      transform-origin: center;
+    }
+  }
+
+  .logo-text {
+    animation: glow-text 2s ease-in-out infinite;
+  }
+
+  @keyframes glow-text {
+    0%, 100% {
+      filter: drop-shadow(0 0 5px var(--sec));
+    }
+    50% {
+      filter: drop-shadow(0 0 20px var(--sec));
+    }
+  }
+
+  #loading-phrase {
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .fade-in-out {
+    animation: fade-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes fade-pulse {
+    0%, 100% {
+      opacity: 0.7;
+    }
+    50% {
+      opacity: 1;
+    }
   }
 </style>

@@ -17,6 +17,21 @@ const navItems: NavItem[] = [
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M4 5V19H20V7H11.5858L9.58579 5H4ZM12.4142 5H21C21.5523 5 22 5.44772 22 6V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H10.4142L12.4142 5Z"></path></svg>`,
   },
   {
+    label: "Stack",
+    href: "#stack",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M3.78307 2.82598L12 1L20.2169 2.82598C20.6745 2.92766 21 3.33347 21 3.80217V13.7889C21 15.795 19.9974 17.6684 18.3282 18.7812L12 23L5.6718 18.7812C4.00261 17.6684 3 15.795 3 13.7889V3.80217C3 3.33347 3.32553 2.92766 3.78307 2.82598ZM5 4.60434V13.7889C5 15.1263 5.6684 16.3752 6.7812 17.1171L12 20.5963L17.2188 17.1171C18.3316 16.3752 19 15.1263 19 13.7889V4.60434L12 3.04879L5 4.60434Z"></path></svg>`,
+  },
+  {
+    label: "Blog",
+    href: "#blog",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM20 7.23792L12.0718 14.338L4 7.21594V19H20V7.23792ZM4.51146 5L12.0619 11.662L19.501 5H4.51146Z"></path></svg>`,
+  },
+  {
+    label: "Certificaciones",
+    href: "#certificaciones",
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M17 15.2454V22.1169C17 22.393 16.7761 22.617 16.5 22.617C16.4094 22.617 16.3205 22.5923 16.2428 22.5457L12 20L7.75725 22.5457C7.52046 22.6877 7.21333 22.6109 7.07125 22.3742C7.02463 22.2964 7 22.2075 7 22.1169V15.2454C5.17107 13.7793 4 11.5264 4 9C4 4.58172 7.58172 1 12 1C16.4183 1 20 4.58172 20 9C20 11.5264 18.8289 13.7793 17 15.2454ZM9 16.4185V19.4676L12 17.6676L15 19.4676V16.4185C14.0736 16.7935 13.0609 17 12 17C10.9391 17 9.92639 16.7935 9 16.4185ZM12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z"></path></svg>`,
+  },
+  {
     label: "Contacto",
     href: "#contact",
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21.7267 2.95694L16.2734 22.0432C16.1225 22.5716 15.7979 22.5956 15.5563 22.1126L11 13L1.9229 9.36919C1.41322 9.16532 1.41953 8.86022 1.95695 8.68108L21.0432 2.31901C21.5716 2.14285 21.8747 2.43866 21.7267 2.95694ZM19.0353 5.09647L6.81221 9.17085L12.4488 11.4255L15.4895 17.5068L19.0353 5.09647Z"></path></svg>`,
@@ -29,24 +44,24 @@ const navItems: NavItem[] = [
   <div id="scroll-progress-bar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-[var(--sec)] via-[#c084ff] to-[var(--sec)] z-[101] transition-all duration-100" style="width: 0%"></div>
   
   <nav
-    class="fixed flex left-0 right-0 z-[100] bg-[#1414149c] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all md:top-0 md:bottom-auto bottom-0 md:w-[36rem] rounded-t-2xl md:rounded-full md:mt-6 md:justify-self-center"
+    class="fixed flex left-0 right-0 z-[100] bg-[#1414149c] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all md:top-0 md:bottom-auto bottom-0 md:max-w-5xl md:w-auto rounded-t-2xl md:rounded-full md:mt-6 md:justify-self-center"
   >
-    <div class="container mx-auto flex justify-between items-center p-3 px-6">
+    <div class="container mx-auto flex justify-between items-center p-3 px-4 md:px-6">
       <ul
-        class="flex justify-between md:space-x-6 md:justify-center md:gap-12 gap-6"
+        class="flex justify-between md:space-x-2 md:justify-center md:gap-4 gap-3 flex-1 md:flex-none"
       >
         {
           navItems.map((item) => (
             <li class="flex-1 md:flex-none">
               <a
                 href={item.href}
-                class="flex flex-col items-center gap-1 text-[var(--white-icon)] transition-colors text-xs md:text-base"
+                class="flex flex-col items-center gap-1 text-[var(--white-icon)] hover:text-[var(--white)] transition-colors text-[10px] md:text-sm md:px-2"
               >
-                <span class="md:hidden flex items-center justify-center w-6 h-6">
+                <span class="md:hidden flex items-center justify-center w-5 h-5">
                   <fragment set:html={item.icon} />
                 </span>
                 <span class="hidden md:inline-block">{item.label}</span>
-                <span class="md:hidden">{item.label}</span>
+                <span class="md:hidden leading-tight">{item.label}</span>
               </a>
             </li>
           ))
@@ -56,7 +71,7 @@ const navItems: NavItem[] = [
       <!-- Sound Toggle Button -->
       <button
         id="sound-toggle"
-        class="ml-auto md:ml-2 flex items-center justify-center w-10 h-10 rounded-full bg-[var(--card)] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-all duration-300"
+        class="ml-2 md:ml-3 flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-[var(--card)] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-all duration-300"
         aria-label="Toggle sound"
         title="Activar/Desactivar sonidos"
       >
@@ -71,7 +86,7 @@ const navItems: NavItem[] = [
       <!-- Theme Toggle Button -->
       <button
         id="theme-toggle"
-        class="md:ml-2 flex items-center justify-center w-10 h-10 rounded-full bg-[var(--card)] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-all duration-300"
+        class="ml-2 flex items-center justify-center w-9 h-9 md:w-10 md:h-10 rounded-full bg-[var(--card)] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-all duration-300"
         aria-label="Toggle theme"
       >
         <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-[var(--white-icon)] transition-all duration-300">
@@ -114,17 +129,22 @@ const navItems: NavItem[] = [
   });
 
   document.addEventListener("DOMContentLoaded", () => {
-    const sections = document.querySelectorAll("section[id]");
+    // Observar tanto secciones como divs con id que están en el nav
+    const sections = document.querySelectorAll("section[id], div[id='stack'], div[id='blog'], div[id='certificaciones']");
     const navLinks = document.querySelectorAll("nav a[href^='#']");
-    const observerOptions = { threshold: 0.6 };
+    const observerOptions = { 
+      threshold: 0.3,
+      rootMargin: '-20% 0px -20% 0px'
+    };
 
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          navLinks.forEach((link) => link.classList.remove("active"));
           const id = entry.target.getAttribute("id");
           const activeLink = document.querySelector(`nav a[href="#${id}"]`);
+          
           if (activeLink) {
+            navLinks.forEach((link) => link.classList.remove("active"));
             activeLink.classList.add("active");
           }
         }
@@ -135,7 +155,9 @@ const navItems: NavItem[] = [
       observerCallback,
       observerOptions
     );
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((section) => {
+      if (section) observer.observe(section);
+    });
   });
 
   // ===== SOUND TOGGLE =====
