@@ -16,16 +16,16 @@ import NowSection from "@/React/NowSection.tsx";
   <Projects />
   
   <!-- Blog & Artículos -->
-  <section class="text-[var(--white)] relative overflow-hidden py-12">
+  <section class="text-[var(--white)] relative overflow-hidden py-12" id="blog">
     <div class="max-w-5xl mx-auto space-y-8 relative z-10">
-      <div class="pt-12" id="blog">
+      <div class="pt-12">
         <BlogArticles client:load />
       </div>
     </div>
   </section>
 
   <!-- Sección "Ahora" (Now Page) -->
-  <section class="text-[var(--white)] relative overflow-hidden py-12">
+  <section class="text-[var(--white)] relative overflow-hidden py-12" id="ahora">
     <div class="max-w-5xl mx-auto space-y-8 relative z-10">
       <div class="pt-12">
         <NowSection client:load />
@@ -34,9 +34,9 @@ import NowSection from "@/React/NowSection.tsx";
   </section>
 
   <!-- Galería de Logros -->
-  <section class="text-[var(--white)] relative overflow-hidden py-12">
+  <section class="text-[var(--white)] relative overflow-hidden py-12" id="certificaciones">
     <div class="max-w-5xl mx-auto space-y-8 relative z-10">
-      <div class="pt-12" id="certificaciones">
+      <div class="pt-12">
         <AchievementsGallery client:load />
       </div>
     </div>
