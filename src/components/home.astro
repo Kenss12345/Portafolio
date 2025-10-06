@@ -126,16 +126,6 @@ import NowSection from "../React/NowSection.tsx";
     <div class="content-fade-in pt-12" id="stack">
       <TechStack client:load />
     </div>
-
-    <!-- Blog & Artículos -->
-    <div class="content-fade-in pt-12" id="blog">
-      <BlogArticles client:load />
-    </div>
-
-    <!-- Galería de Logros -->
-    <div class="content-fade-in pt-12" id="certificaciones">
-      <AchievementsGallery client:load />
-    </div>
   </div>
 </section>
 
@@ -166,14 +156,16 @@ import NowSection from "../React/NowSection.tsx";
 
   /* Aplicar animación a la foto de perfil */
   .profile-roll-in {
+    opacity: 0;
     animation: rollIn 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 3.8s; /* Inicia después de que la pantalla de carga desaparezca */
   }
 
   /* Aplicar animación al contenido (aparece después de la foto) */
   .content-fade-in {
     opacity: 0;
     animation: fadeInUp 0.8s ease-out forwards;
-    animation-delay: 1.6s;
+    animation-delay: 5.3s; /* 3.8s (perfil) + 1.5s (duración del perfil) */
   }
 
   /* Evitar overflow horizontal durante la animación */

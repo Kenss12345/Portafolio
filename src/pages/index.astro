@@ -5,12 +5,33 @@ import Home from "@/components/home.astro";
 import Projects from "@/components/projects.astro";
 import Contact from "@/components/contact.astro";
 import Footer from "@/components/footer.astro";
+import BlogArticles from "@/React/BlogArticles.tsx";
+import AchievementsGallery from "@/React/AchievementsGallery.tsx";
 ---
 
 <Layout title="Kenss Lin Kadú Hilario Castro">
   <Nav />
   <Home />
   <Projects />
+  
+  <!-- Blog & Artículos -->
+  <section class="text-[var(--white)] relative overflow-hidden py-12">
+    <div class="max-w-5xl mx-auto space-y-8 relative z-10">
+      <div class="content-fade-in pt-12" id="blog">
+        <BlogArticles client:load />
+      </div>
+    </div>
+  </section>
+
+  <!-- Galería de Logros -->
+  <section class="text-[var(--white)] relative overflow-hidden py-12">
+    <div class="max-w-5xl mx-auto space-y-8 relative z-10">
+      <div class="content-fade-in pt-12" id="certificaciones">
+        <AchievementsGallery client:load />
+      </div>
+    </div>
+  </section>
+
   <Contact />
   <Footer />
 </Layout>

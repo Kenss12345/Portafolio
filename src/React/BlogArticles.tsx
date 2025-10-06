@@ -18,7 +18,7 @@ const BlogArticles = () => {
   const articles: Article[] = [
     {
       id: 1,
-      title: "Construyendo Apps Móviles con Flutter",
+      title: "Construyendo Apps Móviles y Web con Flutter",
       excerpt: "Mi experiencia desarrollando aplicaciones multiplataforma con Flutter y Firebase.",
       content: `En este artículo compartiré mi experiencia desarrollando aplicaciones móviles con Flutter...
       
@@ -35,7 +35,7 @@ Los desafíos principales fueron la integración con APIs nativas y la gestión 
       date: "2025-01-15",
       readTime: 5,
       tags: ["Flutter", "Mobile", "Firebase"],
-      image: "/AppComu/EquiposaCargo.png"
+      image: "/BlogArticles/FlutterFirebase.png"
     },
     {
       id: 2,
@@ -56,7 +56,7 @@ También aprendí sobre profiling y análisis de complejidad temporal, herramien
       date: "2024-12-20",
       readTime: 7,
       tags: ["C++", "Algorithms", "Performance"],
-      image: "/TravelEase/MapaHuancayo.png"
+      image: "/BlogArticles/Djistra.png"
     },
     {
       id: 3,
@@ -82,20 +82,18 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
       date: "2024-11-10",
       readTime: 6,
       tags: ["Python", "AI", "Computer Vision"],
-      image: "/EvoFit/EvoFit3.png"
+      image: "/BlogArticles/IAFitness.png"
     }
   ];
 
   const openArticle = (article: Article) => {
     setSelectedArticle(article);
     setReadProgress(0);
-    document.body.style.overflow = 'hidden';
   };
 
   const closeArticle = () => {
     setSelectedArticle(null);
     setReadProgress(0);
-    document.body.style.overflow = '';
   };
 
   // Simular progreso de lectura
@@ -109,9 +107,9 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
 
   return (
     <div className="w-full space-y-6">
-      <div>
+      <div className="scroll-reveal">
         <h3 className="text-[var(--white)] text-3xl md:text-4xl font-semibold mb-4">
-          📝 Blog & Artículos
+          Blog & Artículos
         </h3>
         <p className="text-[var(--white-icon)] text-sm md:text-base">
           Experiencias, aprendizajes y tutoriales técnicos
@@ -123,11 +121,8 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
         {articles.map((article, index) => (
           <article
             key={article.id}
-            className="group bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl overflow-hidden hover:border-[var(--sec)] transition-all duration-300 cursor-pointer hover:transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(164,118,255,0.2)]"
+            className="scroll-reveal-scale group bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl overflow-hidden hover:border-[var(--sec)] transition-all duration-300 cursor-pointer hover:transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(164,118,255,0.2)]"
             onClick={() => openArticle(article)}
-            style={{
-              animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
-            }}
           >
             {/* Imagen */}
             <div className="relative h-48 overflow-hidden">
@@ -177,9 +172,9 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
 
       {/* Modal de Artículo */}
       {selectedArticle && (
-        <div className="fixed inset-0 z-[10100]" aria-hidden="false">
+        <div className="fixed inset-0 z-[10100]" aria-hidden="false" onClick={closeArticle}>
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeArticle}></div>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
           
           {/* Barra de progreso de lectura */}
           <div className="fixed top-0 left-0 right-0 h-1 bg-[var(--card)] z-10">
@@ -190,7 +185,7 @@ El resultado es una aplicación que puede ayudar a usuarios a realizar ejercicio
           </div>
 
           {/* Contenedor centrado */}
-          <div className="relative h-full w-full flex items-center justify-center p-4">
+          <div className="relative h-full w-full flex items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
             <div className="w-full max-w-4xl bg-[#0f0f0f] rounded-2xl border border-[var(--white-icon-tr)] shadow-2xl overflow-hidden">
               {/* Header */}
               <div className="flex items-start justify-between p-4 border-b border-[#ffffff10]">

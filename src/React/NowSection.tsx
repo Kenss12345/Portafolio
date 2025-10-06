@@ -26,33 +26,33 @@ const NowSection = () => {
 
   const currentProjects = [
     {
-      title: "Portfolio Interactivo",
+      title: "Portafolio Interactivo",
       description: "Este mismo proyecto que estás viendo",
       status: "En desarrollo",
-      image: "/perfil.png",
+      image: "/ProyectosRecientes/Portafolio.png",
       tech: ["Astro", "React", "TypeScript", "Tailwind"]
     },
     {
-      title: "App de Gestión Comunitaria",
-      description: "Sistema de gestión para comunidades y equipos",
+      title: "AppComu",
+      description: "Sistema de gestión de equipos audiovizuales (Para docentes y estudiantes de la Facultad de Comunicaciones de la universidad Continental - Huancayo)",
       status: "Completado",
-      image: "/AppComu/PantallaGestor1.png",
+      image: "/ProyectosRecientes/AppComu.png",
       tech: ["Flutter", "Firebase", "Dart"]
     },
     {
-      title: "Sistema de Navegación",
-      description: "App de rutas inteligentes para Huancayo",
+      title: "TravelEase",
+      description: "App de rutas inteligentes para la ciudad de Huancayo",
       status: "Completado",
-      image: "/TravelEase/MapaHuancayo.png",
+      image: "/ProyectosRecientes/TravelEase.png",
       tech: ["Flutter", "Google Maps API", "Pathfinding"]
     }
   ];
 
   return (
     <div className="w-full space-y-8">
-      <div className="space-y-2">
+      <div className="space-y-2 scroll-reveal">
         <h3 className="text-[var(--white)] text-3xl md:text-4xl font-semibold flex items-center gap-3">
-          📍 Ahora
+          Ahora
         </h3>
         <p className="text-[var(--white-icon)] text-sm md:text-base">
           Una instantánea de lo que estoy haciendo actualmente
@@ -64,17 +64,14 @@ const NowSection = () => {
 
       {/* Qué estoy aprendiendo */}
       <div className="space-y-4">
-        <h4 className="text-[var(--white)] text-xl font-semibold">
-          📚 Aprendiendo
+        <h4 className="text-[var(--white)] text-xl font-semibold scroll-reveal">
+          Aprendiendo
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {learning.map((item, index) => (
             <div
               key={index}
-              className="bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl p-4 hover:border-[var(--sec)] transition-all duration-300 hover:transform hover:-translate-y-1"
-              style={{
-                animation: `fadeInUp 0.5s ease-out ${index * 0.1}s both`
-              }}
+              className="scroll-reveal-scale bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl p-4 hover:border-[var(--sec)] transition-all duration-300 hover:transform hover:-translate-y-1"
             >
               <div className="flex items-start gap-3 mb-3">
                 <span className="text-3xl">{item.icon}</span>
@@ -95,7 +92,7 @@ const NowSection = () => {
                 </div>
                 <div className="h-2 bg-[var(--card-hover)] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[var(--sec)] to-[#c084ff] rounded-full transition-all duration-1000"
+                    className="h-full bg-gradient-to-r from-[var(--sec)] to-[#c084ff] rounded-full transition-all duration-1000 relative overflow-hidden"
                     style={{ width: `${item.progress}%` }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
@@ -109,17 +106,14 @@ const NowSection = () => {
 
       {/* Proyectos en progreso */}
       <div className="space-y-4">
-        <h4 className="text-[var(--white)] text-xl font-semibold">
-          🚀 Proyectos Recientes
+        <h4 className="text-[var(--white)] text-xl font-semibold scroll-reveal">
+          Proyectos Recientes
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {currentProjects.map((project, index) => (
             <div
               key={index}
-              className="bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl overflow-hidden hover:border-[var(--sec)] transition-all duration-300 hover:transform hover:-translate-y-1 group"
-              style={{
-                animation: `fadeInUp 0.5s ease-out ${index * 0.1 + 0.3}s both`
-              }}
+              className="scroll-reveal-scale bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl overflow-hidden hover:border-[var(--sec)] transition-all duration-300 hover:transform hover:-translate-y-1 group"
             >
               {/* Imagen */}
               <div className="relative h-40 overflow-hidden bg-[var(--card-hover)]">
@@ -168,7 +162,7 @@ const NowSection = () => {
       </div>
 
       {/* Nota personal */}
-      <div className="bg-gradient-to-r from-[var(--sec)]/10 to-transparent border-l-4 border-[var(--sec)] rounded-r-xl p-4">
+      <div className="scroll-reveal bg-gradient-to-r from-[var(--sec)]/10 to-transparent border-l-4 border-[var(--sec)] rounded-r-xl p-4">
         <p className="text-[var(--white-icon)] italic text-sm">
           💡 <strong className="text-[var(--white)]">Filosofía actual:</strong> "Construyendo proyectos que importan, 
           aprendiendo algo nuevo cada día, y compartiendo el conocimiento con la comunidad."

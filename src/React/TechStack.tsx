@@ -9,6 +9,7 @@ interface TechSkill {
 
 const TechStack = () => {
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const techSkills: TechSkill[] = [
     // Frontend
@@ -52,17 +53,39 @@ const TechStack = () => {
 
   return (
     <div className="w-full space-y-6">
-      <div>
-        <h3 className="text-[var(--white)] text-3xl md:text-4xl font-semibold mb-4">
-          Stack Tecnológico
-        </h3>
-        <p className="text-[var(--white-icon)] text-sm md:text-base">
-          Mis habilidades y nivel de experiencia en diferentes tecnologías
-        </p>
+      <div className="scroll-reveal flex items-center justify-between">
+        <div>
+          <h3 className="text-[var(--white)] text-3xl md:text-4xl font-semibold mb-4">
+            Stack Tecnológico
+          </h3>
+          <p className="text-[var(--white-icon)] text-sm md:text-base">
+            Mis habilidades y nivel de experiencia en diferentes tecnologías
+          </p>
+        </div>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex-shrink-0 p-3 rounded-lg bg-[var(--sec)] border border-[var(--sec)] hover:bg-[#8a5dd6] transition-all duration-300"
+          aria-label={isExpanded ? "Contraer" : "Expandir"}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className={`w-6 h-6 text-white transition-transform duration-300 ${
+              isExpanded ? "rotate-180" : ""
+            }`}
+          >
+            <path d="M11.9999 13.1714L16.9497 8.22168L18.3639 9.63589L11.9999 15.9999L5.63599 9.63589L7.0502 8.22168L11.9999 13.1714Z"></path>
+          </svg>
+        </button>
       </div>
 
-      {/* Filtros de categoría */}
-      <div className="flex flex-wrap gap-2">
+      {/* Contenido colapsable */}
+      <div className={`space-y-6 transition-all duration-500 overflow-hidden ${
+        isExpanded ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"
+      }`}>
+        {/* Filtros de categoría */}
+        <div className="flex flex-wrap gap-2 scroll-reveal">
         {categories.map((category) => (
           <button
             key={category}
@@ -78,102 +101,102 @@ const TechStack = () => {
         ))}
       </div>
 
-      {/* Grid de habilidades con barras de progreso */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredSkills.map((skill, index) => (
-          <div
-            key={skill.name}
-            className={`group bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl p-4 hover:border-[var(--sec)] transition-all duration-300 cursor-pointer ${
-              selectedTech === skill.name ? "ring-2 ring-[var(--sec)]" : ""
-            }`}
-            onClick={() => setSelectedTech(selectedTech === skill.name ? null : skill.name)}
-            style={{
-              animation: `fadeInUp 0.5s ease-out ${index * 0.05}s both`
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[var(--card-hover)] flex items-center justify-center p-2 group-hover:scale-110 transition-transform">
-                  <img 
-                    src={skill.icon} 
-                    alt={skill.name}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div>
-                  <h4 className="text-[var(--white)] font-semibold">{skill.name}</h4>
-                  <span className="text-xs text-[var(--white-icon)]">{skill.category}</span>
-                </div>
-              </div>
-              <span className="text-[var(--sec)] font-bold text-lg">{skill.level}%</span>
-            </div>
-            
-            {/* Barra de progreso animada */}
-            <div className="relative h-2 bg-[var(--card-hover)] rounded-full overflow-hidden">
-              <div
-                className="absolute top-0 left-0 h-full bg-gradient-to-r from-[var(--sec)] to-[#8a5dd6] rounded-full transition-all duration-1000 ease-out"
-                style={{
-                  width: selectedTech === skill.name || activeCategory !== "All" ? `${skill.level}%` : "0%",
-                  animation: activeCategory !== "All" ? `growWidth 1s ease-out ${index * 0.05}s both` : "none"
-                }}
-              >
-                {/* Efecto de brillo en la barra */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Radar Chart (Spider Chart) simplificado */}
-      <div className="bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-2xl p-6">
-        <h4 className="text-[var(--white)] text-xl font-semibold mb-4 text-center">
-          Resumen de Habilidades por Categoría
-        </h4>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {categories.slice(1).map((category) => {
-            const categorySkills = techSkills.filter(s => s.category === category);
-            const avgLevel = Math.round(
-              categorySkills.reduce((acc, s) => acc + s.level, 0) / categorySkills.length
-            );
-            
-            return (
-              <div key={category} className="text-center">
-                <div className="relative w-24 h-24 mx-auto mb-2">
-                  {/* Círculo de fondo */}
-                  <svg className="w-full h-full transform -rotate-90">
-                    <circle
-                      cx="48"
-                      cy="48"
-                      r="40"
-                      stroke="var(--card-hover)"
-                      strokeWidth="8"
-                      fill="none"
+        {/* Grid de habilidades con barras de progreso */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredSkills.map((skill, index) => (
+            <div
+              key={`${skill.name}-${activeCategory}`}
+              className={`group bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl p-4 hover:border-[var(--sec)] transition-all duration-300 cursor-pointer ${
+                selectedTech === skill.name ? "ring-2 ring-[var(--sec)]" : ""
+              }`}
+              onClick={() => setSelectedTech(selectedTech === skill.name ? null : skill.name)}
+              style={{
+                animation: `fadeInUp 0.5s ease-out ${index * 0.05}s both`
+              }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[var(--card-hover)] flex items-center justify-center p-2 group-hover:scale-110 transition-transform">
+                    <img 
+                      src={skill.icon} 
+                      alt={skill.name}
+                      className="w-full h-full object-contain"
                     />
-                    {/* Círculo de progreso */}
-                    <circle
-                      cx="48"
-                      cy="48"
-                      r="40"
-                      stroke="var(--sec)"
-                      strokeWidth="8"
-                      fill="none"
-                      strokeDasharray={`${(avgLevel / 100) * 251.2} 251.2`}
-                      className="transition-all duration-1000 ease-out"
-                      style={{
-                        filter: "drop-shadow(0 0 8px rgba(164, 118, 255, 0.5))"
-                      }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[var(--white)] font-bold text-lg">{avgLevel}%</span>
+                  </div>
+                  <div>
+                    <h4 className="text-[var(--white)] font-semibold">{skill.name}</h4>
+                    <span className="text-xs text-[var(--white-icon)]">{skill.category}</span>
                   </div>
                 </div>
-                <p className="text-[var(--white-icon)] text-sm font-medium">{category}</p>
-                <p className="text-xs text-[var(--white-icon)] opacity-60">{categorySkills.length} skills</p>
+                <span className="text-[var(--sec)] font-bold text-lg">{skill.level}%</span>
               </div>
-            );
-          })}
+              
+              {/* Barra de progreso animada */}
+              <div className="relative h-2 bg-[var(--card-hover)] rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[var(--sec)] to-[#8a5dd6] rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                  style={{
+                    width: `${skill.level}%`
+                  }}
+                >
+                  {/* Efecto de brillo en la barra */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Radar Chart (Spider Chart) simplificado */}
+        <div className="scroll-reveal bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-2xl p-6">
+          <h4 className="text-[var(--white)] text-xl font-semibold mb-4 text-center">
+            Resumen de Habilidades por Categoría
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {categories.slice(1).map((category) => {
+              const categorySkills = techSkills.filter(s => s.category === category);
+              const avgLevel = Math.round(
+                categorySkills.reduce((acc, s) => acc + s.level, 0) / categorySkills.length
+              );
+              
+              return (
+                <div key={category} className="text-center">
+                  <div className="relative w-24 h-24 mx-auto mb-2">
+                    {/* Círculo de fondo */}
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="40"
+                        stroke="var(--card-hover)"
+                        strokeWidth="8"
+                        fill="none"
+                      />
+                      {/* Círculo de progreso */}
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="40"
+                        stroke="var(--sec)"
+                        strokeWidth="8"
+                        fill="none"
+                        strokeDasharray={`${(avgLevel / 100) * 251.2} 251.2`}
+                        className="transition-all duration-1000 ease-out"
+                        style={{
+                          filter: "drop-shadow(0 0 8px rgba(164, 118, 255, 0.5))"
+                        }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[var(--white)] font-bold text-lg">{avgLevel}%</span>
+                    </div>
+                  </div>
+                  <p className="text-[var(--white-icon)] text-sm font-medium">{category}</p>
+                  <p className="text-xs text-[var(--white-icon)] opacity-60">{categorySkills.length} skills</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

@@ -44,7 +44,8 @@ const navItems: NavItem[] = [
   <div id="scroll-progress-bar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-[var(--sec)] via-[#c084ff] to-[var(--sec)] z-[101] transition-all duration-100" style="width: 0%"></div>
   
   <nav
-    class="fixed flex left-0 right-0 z-[100] bg-[#1414149c] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all md:top-0 md:bottom-auto bottom-0 md:max-w-5xl md:w-auto rounded-t-2xl md:rounded-full md:mt-6 md:justify-self-center"
+    id="main-nav"
+    class="fixed flex left-0 right-0 z-[100] bg-[#1414149c] border border-1 border-[var(--white-icon-tr)] backdrop-blur-xl transition-all duration-500 ease-in-out md:top-0 md:bottom-auto bottom-0 md:max-w-5xl md:w-auto rounded-t-2xl md:rounded-full md:mt-6 md:justify-self-center"
   >
     <div class="container mx-auto flex justify-between items-center p-3 px-4 md:px-6">
       <ul
@@ -67,6 +68,18 @@ const navItems: NavItem[] = [
           ))
         }
       </ul>
+      
+      <!-- Collapse Toggle Button (only visible on desktop) -->
+      <button
+        id="collapse-toggle"
+        class="hidden md:flex ml-2 items-center justify-center w-10 h-10 rounded-full bg-[var(--sec)] border border-[var(--sec)] hover:bg-[#8a5dd6] transition-all duration-300"
+        aria-label="Retraer navegador"
+        title="Retraer/Expandir navegador"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-white transition-all duration-300">
+          <path d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"></path>
+        </svg>
+      </button>
       
       <!-- Sound Toggle Button -->
       <button
@@ -98,6 +111,18 @@ const navItems: NavItem[] = [
       </button>
     </div>
   </nav>
+
+  <!-- Botón flotante para expandir cuando está colapsado (solo desktop) -->
+  <button
+    id="expand-fab"
+    class="hidden fixed top-6 left-4 z-[100] items-center justify-center w-12 h-12 rounded-full bg-[#1414149c] border border-[var(--white-icon-tr)] backdrop-blur-xl hover:border-[var(--sec)] hover:bg-[var(--sec)]/20 transition-all duration-300 shadow-lg"
+    aria-label="Expandir navegador"
+    title="Expandir navegador"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-[var(--white-icon)]">
+      <path d="M13.1717 12.0007L8.22192 7.05093L9.63614 5.63672L16.0001 12.0007L9.63614 18.3646L8.22192 16.9504L13.1717 12.0007Z"></path>
+    </svg>
+  </button>
 </div>
 
 <script>
@@ -292,6 +317,73 @@ const navItems: NavItem[] = [
     window.addEventListener("scroll", updateProgressBar);
     updateProgressBar(); // Initial call
   });
+
+  // ===== NAV COLLAPSE TOGGLE (Desktop only) =====
+  document.addEventListener("DOMContentLoaded", () => {
+    const mainNav = document.getElementById("main-nav");
+    const collapseToggle = document.getElementById("collapse-toggle");
+    const expandFab = document.getElementById("expand-fab");
+    const collapseIcon = collapseToggle?.querySelector("svg");
+
+    // Check for saved collapse state or default to 'false' (expanded)
+    const isCollapsed = localStorage.getItem("nav-collapsed") === "true";
+    
+    // Apply initial state
+    if (isCollapsed && window.innerWidth >= 768) {
+      mainNav?.classList.add("nav-collapsed");
+      expandFab?.classList.remove("hidden");
+      expandFab?.classList.add("md:flex");
+    }
+
+    // Collapse toggle click
+    collapseToggle?.addEventListener("click", () => {
+      const collapsed = mainNav?.classList.contains("nav-collapsed");
+      
+      // Reproducir sonido de click
+      window.portfolioSounds?.playClick();
+
+      if (!collapsed) {
+        // Colapsar
+        mainNav?.classList.add("nav-collapsed");
+        collapseIcon?.classList.add("rotate-180");
+        localStorage.setItem("nav-collapsed", "true");
+        
+        // Mostrar FAB después de la animación
+        setTimeout(() => {
+          expandFab?.classList.remove("hidden");
+          expandFab?.classList.add("md:flex");
+        }, 300);
+      } else {
+        // Expandir
+        mainNav?.classList.remove("nav-collapsed");
+        collapseIcon?.classList.remove("rotate-180");
+        expandFab?.classList.remove("md:flex");
+        expandFab?.classList.add("hidden");
+        localStorage.setItem("nav-collapsed", "false");
+      }
+    });
+
+    // Expand FAB click
+    expandFab?.addEventListener("click", () => {
+      // Reproducir sonido de click
+      window.portfolioSounds?.playClick();
+      
+      mainNav?.classList.remove("nav-collapsed");
+      collapseIcon?.classList.remove("rotate-180");
+      expandFab?.classList.remove("md:flex");
+      expandFab?.classList.add("hidden");
+      localStorage.setItem("nav-collapsed", "false");
+    });
+
+    // Reset on window resize to mobile
+    window.addEventListener("resize", () => {
+      if (window.innerWidth < 768) {
+        mainNav?.classList.remove("nav-collapsed");
+        expandFab?.classList.add("hidden");
+        expandFab?.classList.remove("md:flex");
+      }
+    });
+  });
 </script>
 
 <style>
@@ -303,5 +395,45 @@ const navItems: NavItem[] = [
 
   nav a.active {
     color: white !important;
+  }
+
+  /* Nav collapse styles (desktop only) */
+  @media (min-width: 768px) {
+    #main-nav {
+      transform-origin: center center;
+    }
+
+    #main-nav.nav-collapsed {
+      transform: translateX(-120%) !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #expand-fab {
+      transform: translateX(-100px);
+      opacity: 0;
+      animation: slideInFromLeft 0.4s ease-out 0.3s forwards;
+    }
+
+    @keyframes slideInFromLeft {
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Hover effect for expand FAB */
+    #expand-fab:hover {
+      transform: translateX(0) scale(1.05);
+    }
+
+    #expand-fab:active {
+      transform: translateX(0) scale(0.95);
+    }
+
+    /* Animación del ícono de colapsar */
+    #collapse-toggle svg {
+      transition: transform 0.3s ease;
+    }
   }
 </style>
