@@ -7,6 +7,7 @@ import Contact from "@/components/contact.astro";
 import Footer from "@/components/footer.astro";
 import BlogArticles from "@/React/BlogArticles.tsx";
 import AchievementsGallery from "@/React/AchievementsGallery.tsx";
+import NowSection from "@/React/NowSection.tsx";
 ---
 
 <Layout title="Kenss Lin Kadú Hilario Castro">
@@ -19,6 +20,15 @@ import AchievementsGallery from "@/React/AchievementsGallery.tsx";
     <div class="max-w-5xl mx-auto space-y-8 relative z-10">
       <div class="content-fade-in pt-12" id="blog">
         <BlogArticles client:load />
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección "Ahora" (Now Page) -->
+  <section class="text-[var(--white)] relative overflow-hidden py-12">
+    <div class="max-w-5xl mx-auto space-y-8 relative z-10">
+      <div class="content-fade-in pt-12">
+        <NowSection client:load />
       </div>
     </div>
   </section>

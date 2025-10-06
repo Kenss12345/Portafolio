@@ -30,6 +30,27 @@ interface ProjectData {
 
 const projects: ProjectData[] = [
   {
+    title: "Portafolio Interactivo",
+    description:
+      "Portafolio personal interactivo y moderno con animaciones avanzadas, efectos visuales, y una experiencia de usuario excepcional.",
+    folder: "Portafolio",
+    technologies: ["TypeScript", "JavaScript", "Astro", "React", "Tailwind"],
+    stats: {
+      duration: "2 meses",
+      linesOfCode: "10K+",
+      status: "En desarrollo"
+    },
+    images: [
+      "/Portafolio/Portafolio.png",
+      "/Portafolio/Portafolio1.png",
+      "/Portafolio/Portafolio2.png",
+      "/Portafolio/Portafolio3.png",
+      "/Portafolio/Portafolio4.png",
+      "/Portafolio/Portafolio5.png"
+    ],
+    cover: "/Portafolio/Portafolio.png",
+  },
+  {
     title: "AppComu",
     description:
       "Aplicación móvil y web para la gestión de préstamos de equipos de la Facultad de Comunicaciones de la Universidad Continental.",
@@ -37,10 +58,11 @@ const projects: ProjectData[] = [
     technologies: ["Dart", "C++", "CMake", "JavaScript", "Swift", "C", "Firebase"],
     stats: {
       duration: "4 meses",
-      linesOfCode: "15K+",
+      linesOfCode: "25K+",
       status: "Producción"
     },
     images: [
+      "/AppComu/AppComu.png",
       "/AppComu/EquiposaCargo.png",
       "/AppComu/EquiposDiponibles.png",
       "/AppComu/PantalaGestor3.png",
@@ -52,7 +74,7 @@ const projects: ProjectData[] = [
       "/AppComu/Solicitud2.png",
       "/AppComu/Solicitud3.png"
     ],
-    cover: "/AppComu/EquiposaCargo.png",
+    cover: "/AppComu/AppComu.png",
   },
   {
     title: "TravelEase",
@@ -66,6 +88,7 @@ const projects: ProjectData[] = [
       status: "Completado"
     },
     images: [
+      "/TravelEase/1TravelEase.png",
       "/TravelEase/Indicaciones.png",
       "/TravelEase/IndicacionesExpandida.png",
       "/TravelEase/Login.png",
@@ -74,7 +97,7 @@ const projects: ProjectData[] = [
       "/TravelEase/RutaRecomendada.png",
       "/TravelEase/SeleccionPartidaLllegada.png"
     ],
-    cover: "/TravelEase/Indicaciones.png",
+    cover: "/TravelEase/1TravelEase.png",
   },
   {
     title: "EvoFit",
@@ -84,10 +107,11 @@ const projects: ProjectData[] = [
     technologies: ["JavaScript", "Python", "CSS", "MongoDB"],
     stats: {
       duration: "2.5 meses",
-      linesOfCode: "8K+",
+      linesOfCode: "12K+",
       status: "En desarrollo"
     },
     images: [
+      "/EvoFit/1EvoFit.png",
       "/EvoFit/EvoFit1.png",
       "/EvoFit/EvoFit2.png",
       "/EvoFit/EvoFit3.png",
@@ -95,7 +119,7 @@ const projects: ProjectData[] = [
       "/EvoFit/EvoFit5.png",
       "/EvoFit/EvoFit6.png"
     ],
-    cover: "/EvoFit/EvoFit1.png",
+    cover: "/EvoFit/1EvoFit.png",
   },
 ];
 
@@ -104,6 +128,7 @@ const techIcons: Record<string, string> = {
   "C++": "/svg/C++.svg",
   "C": "/svg/C.svg",
   "JavaScript": "/svg/javaScript.svg",
+  "TypeScript": "/svg/typeScript.svg",
   "Python": "/svg/python.svg",
   "CSS": "/svg/CSS3.svg",
   "HTML": "/svg/HTML5.svg",
@@ -112,6 +137,9 @@ const techIcons: Record<string, string> = {
   "Firebase": "/svg/firebase.svg",
   "MongoDB": "/svg/mongodb.svg",
   "CMake": "/svg/cmake.svg",
+  "Astro": "/svg/astro.svg",
+  "React": "/svg/react.svg",
+  "Tailwind": "/svg/tailwindcss.svg",
 };
 ---
 
@@ -381,6 +409,9 @@ const techIcons: Record<string, string> = {
             modalEl.classList.remove('hidden');
             modalEl.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
+            // Ocultar navegación
+            const nav = document.getElementById('main-nav');
+            if (nav) nav.style.display = 'none';
           }
         }
 
@@ -389,6 +420,9 @@ const techIcons: Record<string, string> = {
             modalEl.classList.add('hidden');
             modalEl.setAttribute('aria-hidden', 'true');
             document.body.style.overflow = '';
+            // Mostrar navegación
+            const nav = document.getElementById('main-nav');
+            if (nav) nav.style.display = 'flex';
           }
         }
 

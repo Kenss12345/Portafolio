@@ -102,17 +102,25 @@ const AchievementsGallery = () => {
 
   const openCertificate = (cert: Achievement) => {
     setSelectedCert(cert);
+    // Ocultar navegación y scrollbar
+    const nav = document.getElementById('main-nav');
+    if (nav) nav.style.display = 'none';
+    document.body.style.overflow = 'hidden';
   };
 
   const closeCertificate = () => {
     setSelectedCert(null);
+    // Mostrar navegación y scrollbar
+    const nav = document.getElementById('main-nav');
+    if (nav) nav.style.display = 'flex';
+    document.body.style.overflow = '';
   };
 
   return (
     <div className="w-full space-y-6">
       <div className="scroll-reveal">
         <h3 className="text-[var(--white)] text-3xl md:text-4xl font-semibold mb-4 flex items-center gap-3">
-          🏆 Logros & Certificados
+        Logros & Certificados
         </h3>
         <p className="text-[var(--white-icon)] text-sm md:text-base">
           Colección de certificados y logros obtenidos
@@ -165,7 +173,7 @@ const AchievementsGallery = () => {
 
       {/* Modal Lightbox */}
       {selectedCert && (
-        <div className="fixed inset-0 z-[10100]" aria-hidden="false" onClick={closeCertificate}>
+        <div className="fixed inset-0 z-[10200]" aria-hidden="false" onClick={closeCertificate}>
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
           

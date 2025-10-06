@@ -3,9 +3,6 @@ import LetterGlitch from "../React/LetterGlitch.tsx";
 import LogoWall from "../components/logoWall.astro";
 import SkillsList from "../React/SkillsList.tsx";
 import TechStack from "../React/TechStack.tsx";
-import BlogArticles from "../React/BlogArticles.tsx";
-import AchievementsGallery from "../React/AchievementsGallery.tsx";
-import NowSection from "../React/NowSection.tsx";
 ---
 
 <section class="text-[var(--white)] mt-12 md:mt-0 relative overflow-hidden" id="home">
@@ -39,7 +36,7 @@ import NowSection from "../React/NowSection.tsx";
 
       <div class="flex flex-col lg:flex-row lg:items-center gap-6 content-fade-in">
         <h1 class="text-[var(--white)] text-5xl md:text-6xl font-semibold leading-tight">
-          Desarrollador <br> de Software JR
+          Desarrollador <br> de Software
         </h1>
         <p class="text-md md:text-lg text-[var(--white-icon)] max-w-xl">
           Bachiller de la carrera de Ingeniería de Sistemas e Informática con experiencia en desarrollo de software, 
@@ -115,11 +112,6 @@ import NowSection from "../React/NowSection.tsx";
           smooth={true}
         />
       </div>
-    </div>
-
-    <!-- Sección "Ahora" (Now Page) -->
-    <div class="content-fade-in pt-12">
-      <NowSection client:load />
     </div>
 
     <!-- Stack Tecnológico Interactivo -->
