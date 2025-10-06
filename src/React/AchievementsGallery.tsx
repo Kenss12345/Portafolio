@@ -118,7 +118,7 @@ const AchievementsGallery = () => {
 
   return (
     <div className="w-full space-y-6">
-      <div className="scroll-reveal">
+      <div>
         <h3 className="text-[var(--white)] text-3xl md:text-4xl font-semibold mb-4 flex items-center gap-3">
         Logros & Certificados
         </h3>
@@ -133,7 +133,7 @@ const AchievementsGallery = () => {
           <div
             key={achievement.id}
             onClick={() => openCertificate(achievement)}
-            className="scroll-reveal-scale relative group rounded-xl overflow-hidden border-2 border-[var(--sec)] cursor-pointer hover:transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(164,118,255,0.3)] transition-all duration-300"
+            className="relative group rounded-xl overflow-hidden border-2 border-[var(--sec)] cursor-pointer hover:transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(164,118,255,0.3)] transition-all duration-300"
           >
             {/* Imagen */}
             <div className="relative aspect-square">

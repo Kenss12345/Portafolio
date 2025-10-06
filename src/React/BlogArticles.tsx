@@ -373,7 +373,7 @@ La combinación de visión por computadora, machine learning, y procesamiento en
 
   return (
     <div className="w-full space-y-6">
-      <div className="scroll-reveal">
+      <div>
         <h3 className="text-[var(--white)] text-3xl md:text-4xl font-semibold mb-4">
           Blog & Artículos
         </h3>
@@ -387,7 +387,7 @@ La combinación de visión por computadora, machine learning, y procesamiento en
         {articles.map((article, index) => (
           <article
             key={article.id}
-            className="scroll-reveal-scale group bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl overflow-hidden hover:border-[var(--sec)] transition-all duration-300 cursor-pointer hover:transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(164,118,255,0.2)]"
+            className="group bg-[var(--card)] border border-[var(--white-icon-tr)] rounded-xl overflow-hidden hover:border-[var(--sec)] transition-all duration-300 cursor-pointer hover:transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(164,118,255,0.2)]"
             onClick={() => openArticle(article)}
           >
             {/* Imagen */}
