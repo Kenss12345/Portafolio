@@ -30,6 +30,26 @@ interface ProjectData {
 
 const projects: ProjectData[] = [
   {
+    title: "MarketAi",
+    description:
+      "Plataforma de automatización SEO end-to-end que genera y publica contenido optimizado para WordPress de forma autónoma.",
+    folder: "MarketIA",
+    technologies: ["TypeScript", "JavaScript", "React", "Node.js", "PostgreSQL", "Docker"],
+    stats: {
+      duration: "2 meses",
+      linesOfCode: "15K+",
+      status: "Producción"
+    },
+    images: [
+      "/MarketIA/Keywords.png",
+      "/MarketIA/Articulo1.png",
+      "/MarketIA/Articulo2.png",
+      "/MarketIA/Calendario.png",
+      "/MarketIA/Configuracion.png"
+    ],
+    cover: "/MarketIA/Keywords.png",
+  },
+  {
     title: "Portafolio Interactivo",
     description:
       "Portafolio personal interactivo y moderno con animaciones avanzadas, efectos visuales, y una experiencia de usuario excepcional.",
@@ -38,7 +58,7 @@ const projects: ProjectData[] = [
     stats: {
       duration: "2 meses",
       linesOfCode: "10K+",
-      status: "En desarrollo"
+      status: "Producción"
     },
     images: [
       "/Portafolio/Portafolio.png",
@@ -140,6 +160,9 @@ const techIcons: Record<string, string> = {
   "Astro": "/svg/astro.svg",
   "React": "/svg/react.svg",
   "Tailwind": "/svg/tailwindcss.svg",
+  "Node.js": "/svg/nodejs.svg",
+  "PostgreSQL": "/svg/postgresql.svg",
+  "Docker": "/svg/docker.svg",
 };
 ---
 

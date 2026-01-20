@@ -18,17 +18,232 @@ const BlogArticles = () => {
   const articles: Article[] = [
     {
       id: 1,
+      title: "Automatización SEO: De Keywords a Artículos Publicados en 2 Horas",
+      excerpt: "Cómo construí una plataforma que automatiza la creación y publicación de contenido SEO usando IA, n8n y WordPress.",
+      content: `En este artículo compartiré cómo desarrollé MarketAi, una plataforma de automatización SEO end-to-end que transforma keywords en artículos publicados sin intervención manual, combinando inteligencia artificial, orquestación de workflows y arquitectura moderna.
+
+El Desafío: Democratizar la Creación de Contenido SEO
+
+El marketing de contenidos es fundamental para cualquier negocio digital, pero crear contenido SEO de calidad a escala es costoso y requiere mucho tiempo. Un solo artículo puede tomar entre 4-8 horas entre investigación, redacción, optimización SEO, diseño de imágenes y publicación.
+
+MarketAi nació para resolver este problema: automatizar completamente el proceso de creación de contenido SEO, desde la keyword hasta el artículo publicado en WordPress, manteniendo calidad y optimización.
+
+El objetivo era ambicioso: reducir el tiempo de 4-8 horas a menos de 2 horas, sin intervención humana, y a una fracción del costo.
+
+Arquitectura del Sistema
+
+El stack tecnológico fue cuidadosamente elegido para equilibrar potencia, escalabilidad y facilidad de mantenimiento:
+
+• Frontend: React + Vite con TypeScript para un UI rápido y type-safe. La aplicación permite gestionar keywords, configurar parámetros de generación, programar publicaciones y monitorear el pipeline completo.
+
+• Backend: Express.js con Node.js, manejando la lógica de negocio, autenticación, y comunicación con servicios externos. TypeScript en ambos lados del stack garantiza consistencia.
+
+• Base de Datos: PostgreSQL para almacenar keywords, artículos generados, configuraciones, y metadatos. Elegí PostgreSQL por su robustez, soporte de JSON para datos flexibles, y capacidades de búsqueda full-text.
+
+• Orquestador: n8n como motor de automatización visual. Los 16 workflows orquestan todo el proceso end-to-end. n8n permite crear flujos complejos sin código, con manejo robusto de errores y reintentos.
+
+• Containerización: Docker Compose para n8n, PostgreSQL y Adminer (administrador de BD web). Todo el stack se levanta con un solo comando.
+
+• Deployment: Railway para hosting cloud. Configuración simplificada, escalado automático, y monitoreo integrado.
+
+Los 16 Workflows: El Cerebro del Sistema
+
+El corazón de MarketAi son los 16 workflows de n8n que automatizan cada fase del proceso:
+
+1. Ingesta de Keywords
+   • Workflow 1: Importación CSV de keywords con validación y deduplicación
+   • Workflow 2: Entrada manual de keywords con sugerencias de volumen de búsqueda
+
+2. Clustering Semántico (Workflows 3-4)
+   • Agrupa keywords relacionadas usando embeddings de OpenAI
+   • Identifica temas principales y subtemas para crear una estructura de contenido coherente
+   • Reduce redundancia y maximiza la cobertura temática
+
+3. Generación de Ideas (Workflows 5-6)
+   • GPT-4 analiza cada cluster y genera ideas de artículos
+   • Crea títulos SEO-optimizados, meta descriptions y estructura de headings (H2, H3)
+   • Valida unicidad de ideas para evitar contenido duplicado
+
+4. Investigación Profunda (Workflows 7-8)
+   • Modo opcional: busca y analiza contenido top-ranking para las keywords objetivo
+   • Extrae insights, estadísticas y puntos clave de la competencia
+   • Enriquece el contexto para que el artículo sea más completo y competitivo
+
+5. Redacción del Artículo (Workflows 9-11)
+   • GPT-4 o GPT-4-mini redactan el artículo completo en HTML limpio
+   • Incluye estructura semántica correcta (headings, párrafos, listas)
+   • Optimización on-page: densidad de keywords, LSI keywords, enlaces internos sugeridos
+   • Modo turbo (GPT-4-mini) para artículos rápidos, modo premium (GPT-4) para profundidad
+
+6. Generación de Imágenes (Workflow 12)
+   • Google Gemini crea imágenes custom relacionadas con el contenido
+   • Optimización automática (compresión, alt text SEO)
+   • Inserción estratégica en el artículo (header, middle, destacados)
+
+7. Control de Calidad SEO (Workflows 13-14)
+   • Validación automática de criterios SEO: meta tags, headings, longitud, legibilidad
+   • Detección de problemas (keyword stuffing, thin content, broken structure)
+   • Score SEO automatizado con sugerencias de mejora
+
+8. Publicación en WordPress (Workflow 15)
+   • Conexión vía REST API de WordPress
+   • Creación de draft o publicación inmediata según configuración
+   • Asignación de categorías, tags, featured image
+   • Programación de publicaciones para calendarios editoriales
+
+9. Generación de Copys para RRSS (Workflow 16)
+   • GPT-4 crea copys optimizados para Twitter, LinkedIn, Facebook, Instagram
+   • Adapta tono y longitud según cada red social
+   • Incluye hashtags relevantes y call-to-action
+
+Integración con OpenAI: GPT-4 y GPT-4-mini
+
+La IA es el motor de contenido. Implementé una estrategia dual:
+
+• GPT-4 (Premium): Para artículos largos (2000+ palabras), profundos, con investigación. Mayor costo pero calidad superior y mejor comprensión contextual.
+
+• GPT-4-mini (Turbo): Para artículos rápidos (800-1500 palabras), noticias, actualizaciones. 10x más económico y 3x más rápido.
+
+La arquitectura de prompts es crucial. Desarrollé un sistema de prompt engineering en 3 capas:
+
+1. System Prompt: Define el rol (experto SEO copywriter), estilo (profesional pero conversacional), y restricciones (HTML limpio, estructura semántica).
+
+2. Context Injection: Inyecta keywords objetivo, competencia analizada, estructura de headings, y tono deseado.
+
+3. Output Format: Especifica formato de salida en JSON estructurado para facilitar parsing y validación.
+
+Resultado: tasa de aceptación del 95% sin ediciones manuales.
+
+Integración con WordPress: REST API
+
+WordPress es el CMS más popular del mundo, por eso la integración fue prioritaria. Utilicé la REST API v2 de WordPress:
+
+• Autenticación: Application Passwords (WordPress 5.6+) para seguridad sin plugins adicionales
+• Endpoints: /wp-json/wp/v2/posts para crear/actualizar artículos
+• Media Upload: /wp-json/wp/v2/media para subir imágenes generadas
+• Custom Fields: Metadatos SEO (Yoast, RankMath compatible)
+
+Desafío: Rate limiting y timeouts. Solución: implementé queue system con reintentos exponenciales y circuit breaker pattern para manejar fallos gracefully.
+
+PostgreSQL: Diseño de Base de Datos
+
+El esquema de BD fue diseñado para eficiencia y flexibilidad:
+
+• Tabla keywords: id, keyword, volumen, dificultad, cluster_id, status
+• Tabla articles: id, title, content_html, meta_description, keywords, images, status, wp_post_id, published_at
+• Tabla workflows_log: tracking de ejecuciones, errores, y tiempos
+• Tabla configs: configuraciones por proyecto (API keys, WordPress URLs, preferencias de generación)
+
+Índices estratégicos en keywords para búsquedas rápidas, y full-text search en content para análisis de duplicados.
+
+Utilicé JSON columns para almacenar configuraciones flexibles y metadatos variables sin cambios de schema.
+
+Docker y Docker Compose: Infraestructura como Código
+
+Todo el stack corre en Docker para consistencia entre desarrollo y producción:
+
+Docker Compose orquesta 5 servicios:
+• postgres: PostgreSQL 15 con volúmenes persistentes
+• n8n: Motor de workflows con variables de entorno para API keys
+• adminer: UI web para administrar PostgreSQL
+• backend: Express.js con hot reload en dev
+• frontend: React + Vite con proxy al backend
+
+Beneficios: onboarding de nuevos devs en minutos, deploys consistentes, rollback fácil.
+
+Deployment en Railway: De Local a Producción
+
+Railway simplificó enormemente el deployment:
+
+• Git Push Deploy: cada push a main dispara build y deploy automático
+• Environment Variables: gestión segura de API keys y secrets
+• Logs en Tiempo Real: debugging fácil de workflows y errores
+• Auto-scaling: Railway escala recursos según demanda
+• Monitoreo Integrado: métricas de CPU, memoria, requests
+
+El costo es predecible: ~$20-40/mes para un proyecto pequeño-mediano, vs. cientos de dólares en AWS con configuración compleja.
+
+Desafíos Técnicos Superados
+
+1. Rate Limits de OpenAI
+Problema: GPT-4 tiene límites de requests/minuto que bloqueaban generación masiva.
+Solución: Implementé queue system con prioridades, backpressure, y fallback a GPT-4-mini en picos.
+
+2. Calidad Inconsistente de IA
+Problema: A veces GPT-4 generaba contenido genérico o desviado del tema.
+Solución: Refiné prompts con ejemplos (few-shot learning), agregué validación de calidad post-generación, y sistema de regeneración automática si score < umbral.
+
+3. Sincronización de Workflows
+Problema: n8n workflows asíncronos dificultaban tracking de estado end-to-end.
+Solución: Implementé event-driven architecture con webhooks entre workflows, y tabla de estado centralizada en PostgreSQL.
+
+4. Manejo de Imágenes
+Problema: Gemini a veces generaba imágenes no relacionadas o de baja calidad.
+Solución: Agregué prompt detallado con descripción del artículo, validación de contenido usando vision API, y fallback a imágenes de stock (Unsplash API).
+
+5. Costos de IA
+Problema: GPT-4 es caro (~$0.03 por artículo de 2000 palabras), difícil de escalar.
+Solución: Implementé caché de chunks reutilizables, modo económico con GPT-4-mini para borradores, y solo GPT-4 para revisión final.
+
+Resultados e Impacto
+
+Después de 2 meses de desarrollo y 3 semanas de refinamiento, los números son impresionantes:
+
+• Tiempo: De 4-8 horas manuales a 1-2 horas automáticas (reducción del 75-90%)
+• Costo: $50-100 por artículo (redactor humano) a $2-5 (IA + infra) - reducción del 95%
+• Calidad: Score SEO promedio de 85/100 (herramientas como SurferSEO)
+• Volumen: Capacidad de generar 10-50 artículos/día vs. 1-2 manuales
+• Consistencia: 95% de artículos requieren cero edición manual
+
+El sistema ha generado más de 200 artículos en producción, con tasa de indexación en Google del 92% en las primeras 48 horas.
+
+Lecciones Aprendidas
+
+1. IA no Reemplaza, Aumenta: La IA no reemplaza completamente a humanos, sino que aumenta productividad. Los mejores resultados vienen de supervisión humana estratégica.
+
+2. Automatización Requiere Diseño: No basta con conectar APIs. Requiere pensar en flujos, errores, reintentos, monitoreo, y UX para configuración.
+
+3. n8n es Poderoso pero Tiene Límites: Excelente para workflows visuales, pero workflows muy complejos son difíciles de debuggear. Equilibrio entre no-code y código custom.
+
+4. Infraestructura como Código es Esencial: Docker salvó incontables horas de "funciona en mi máquina". Reproducibilidad es clave.
+
+5. Prompting es un Arte: Invertí 40% del tiempo refinando prompts. La diferencia entre un prompt mediocre y excelente es contenido amateur vs. profesional.
+
+6. Monitoreo Proactivo: Agregué alertas para fallos de workflows, costos anómalos de IA, y calidad bajo umbral. Detectar problemas temprano ahorra tiempo y dinero.
+
+Futuro del Proyecto
+
+Las próximas mejoras incluyen:
+
+• Multi-idioma: Generación automática de traducciones SEO-optimizadas
+• Video Scripts: Generar guiones para videos de YouTube con timestamps
+• A/B Testing: Variaciones de títulos y meta descriptions para optimización
+• Link Building: Automatización de outreach y guest posting
+• Analytics Integration: Feedback loop con Google Analytics para optimizar generación basada en performance real
+• Multi-CMS: Soporte para Shopify, Webflow, Medium, además de WordPress
+• Marketplace: Permitir a usuarios vender/comprar templates de prompts y workflows
+
+MarketAi demuestra que la combinación de IA generativa, orquestación de workflows, y arquitectura moderna puede democratizar la creación de contenido SEO de calidad a escala. Lo que antes requería equipos de redactores ahora es accesible para startups y pequeños negocios con presupuesto limitado.
+
+La automatización inteligente no solo reduce costos, sino que libera tiempo para estrategia, creatividad, y conexión humana genuina con la audiencia.`,
+      date: "2025-12-16",
+      readTime: 12,
+      tags: ["SEO", "AI", "Automation", "React", "Node.js"],
+      image: "/BlogArticles/AutomatizacionArticulos.png"
+    },
+    {
+      id: 2,
       title: "Construyendo Apps Móviles y Web con Flutter",
       excerpt: "Mi experiencia desarrollando aplicaciones multiplataforma con Flutter y Firebase.",
       content: `En este artículo compartiré mi experiencia desarrollando aplicaciones móviles con Flutter, un framework que ha revolucionado completamente la forma en que creo aplicaciones multiplataforma.
 
-🚀 ¿Por qué Flutter?
+¿Por qué Flutter?
 
 Flutter es un framework increíble desarrollado por Google que me ha permitido crear aplicaciones para iOS, Android y Web con una sola base de código. Durante el desarrollo de AppComu, descubrí el verdadero potencial de esta tecnología.
 
 La principal ventaja es la productividad: escribes el código una vez y funciona en múltiples plataformas sin necesidad de mantener bases de código separadas. Esto no solo ahorra tiempo, sino que también reduce significativamente los errores y facilita el mantenimiento.
 
-📚 Conceptos Clave que Dominas
+Conceptos Clave que Dominas
 
 Durante mi aprendizaje y desarrollo con Flutter, profundicé en varios conceptos fundamentales:
 
@@ -40,19 +255,19 @@ Durante mi aprendizaje y desarrollo con Flutter, profundicé en varios conceptos
 
 • Diseño responsive y adaptativo: Creé interfaces que se adaptan perfectamente a diferentes tamaños de pantalla, desde smartphones hasta tablets.
 
-⚡ El Poder del Hot Reload
+El Poder del Hot Reload
 
 Una de las características más poderosas es el hot reload. Esta funcionalidad te permite ver los cambios en tiempo real sin perder el estado de la aplicación. Es como magia: modificas el código, guardas, y en menos de un segundo ves el resultado en tu dispositivo o emulador.
 
 Esto acelera significativamente el desarrollo y hace que la experiencia de programar sea mucho más fluida y agradable. Ya no necesitas recompilar toda la aplicación cada vez que haces un pequeño cambio.
 
-🎨 Widgets: Los Bloques de Construcción
+Widgets: Los Bloques de Construcción
 
 Flutter destaca por su amplia biblioteca de widgets prediseñados. Desde botones básicos hasta componentes complejos como listas infinitas o animaciones elaboradas, Flutter tiene un widget para casi todo.
 
 Los widgets en Flutter son componentes reutilizables que puedes combinar para crear interfaces complejas. Además, la personalización es muy sencilla: puedes modificar colores, tamaños, formas y comportamientos con solo unas pocas líneas de código.
 
-🔧 Desafíos Superados
+Desafíos Superados
 
 Como en todo proyecto, enfrenté varios desafíos:
 
@@ -64,7 +279,7 @@ Como en todo proyecto, enfrenté varios desafíos:
 
 4. Testing: Implementé pruebas unitarias, de widgets y de integración para garantizar la calidad del código.
 
-💡 Lecciones Aprendidas
+Lecciones Aprendidas
 
 Después de desarrollar AppComu con Flutter, puedo decir que:
 
@@ -74,7 +289,7 @@ Después de desarrollar AppComu con Flutter, puedo decir que:
 • Es ideal para startups y proyectos que necesitan lanzarse rápido
 • El rendimiento es casi nativo en la mayoría de los casos
 
-🎯 Conclusión
+Conclusión
 
 Flutter no es solo un framework más, es una herramienta que realmente cambia la forma en que desarrollas aplicaciones móviles. Si estás considerando aprender desarrollo móvil o buscas una alternativa a desarrollo nativo, Flutter es una excelente opción.
 
@@ -87,18 +302,18 @@ La combinación de Flutter con Firebase crea un ecosistema completo y poderoso p
       image: "/BlogArticles/FlutterFirebase.png"
     },
     {
-      id: 2,
+      id: 3,
       title: "Optimización de Algoritmos en C++",
       excerpt: "Técnicas avanzadas de optimización y estructuras de datos para mejorar el rendimiento.",
       content: `La optimización de código es crucial para aplicaciones de alto rendimiento, y en este artículo compartiré mi experiencia optimizando algoritmos complejos durante el desarrollo de TravelEase, una aplicación de rutas inteligentes.
 
-🎯 El Reto: Búsqueda de Rutas en Tiempo Real
+El Reto: Búsqueda de Rutas en Tiempo Real
 
 TravelEase necesitaba encontrar rutas óptimas entre dos puntos en la ciudad de Huancayo en tiempo real. Con cientos de intersecciones, calles y posibles rutas, la eficiencia era crítica. Un algoritmo lento significaría usuarios frustrados esperando respuestas.
 
 El desafío era doble: encontrar no solo la ruta más corta, sino también considerar el tráfico en tiempo real, el tipo de transporte disponible, y las preferencias del usuario.
 
-🧠 Algoritmos de Grafos: El Corazón del Sistema
+Algoritmos de Grafos: El Corazón del Sistema
 
 Implementé dos algoritmos principales:
 
@@ -108,7 +323,7 @@ Implementé dos algoritmos principales:
 
 La diferencia de rendimiento fue sorprendente: mientras Dijkstra exploraba en promedio 500 nodos para encontrar una ruta, A* solo necesitaba explorar 150-200 nodos gracias a su función heurística bien diseñada.
 
-📊 Estructuras de Datos: La Clave del Rendimiento
+Estructuras de Datos: La Clave del Rendimiento
 
 La elección de estructuras de datos adecuadas marcó una diferencia dramática en el rendimiento:
 
@@ -120,7 +335,7 @@ La elección de estructuras de datos adecuadas marcó una diferencia dramática 
 
 • Sets ordenados: Para mantener los nodos visitados y evitar ciclos infinitos en el grafo.
 
-🔍 Técnicas de Optimización Aplicadas
+Técnicas de Optimización Aplicadas
 
 1. Punteros Inteligentes (Smart Pointers)
 En lugar de manejar memoria manualmente con new/delete, utilicé:
@@ -139,7 +354,7 @@ Aproveché std::move para transferir recursos pesados en lugar de copiarlos. Est
 4. Inline Functions
 Marqué funciones pequeñas y frecuentes como inline para eliminar el overhead de llamadas a función.
 
-⚡ Profiling: Midiendo el Rendimiento Real
+Profiling: Midiendo el Rendimiento Real
 
 Usé herramientas de profiling como:
 
@@ -149,7 +364,7 @@ Usé herramientas de profiling como:
 
 El profiling reveló sorpresas: funciones que pensaba eran rápidas resultaron ser cuellos de botella, y optimizaciones que creía importantes apenas afectaban el rendimiento.
 
-📈 Análisis de Complejidad Temporal
+Análisis de Complejidad Temporal
 
 Entender la complejidad es fundamental:
 
@@ -162,7 +377,7 @@ Para un grafo de 500 intersecciones y 1500 calles:
 • Versión optimizada: ~11,000 operaciones
 • ¡Una mejora de más del 95%!
 
-🛠️ Optimizaciones Específicas del Dominio
+Optimizaciones Específicas del Dominio
 
 1. Caché de Rutas Frecuentes
 Implementé un sistema de caché LRU para almacenar las 100 rutas más consultadas. Si un usuario pide la ruta del punto A al B y ya la calculamos recientemente, la servimos del caché.
@@ -173,7 +388,7 @@ Para ubicaciones populares (universidades, centros comerciales), precalculé las
 3. Índices Espaciales
 Usé un quadtree para búsquedas espaciales rápidas. Cuando un usuario busca transporte cerca de su ubicación, el quadtree encuentra las opciones cercanas en O(log n) en lugar de revisar todas.
 
-💡 Lecciones Aprendidas
+Lecciones Aprendidas
 
 1. "Primero hazlo funcionar, luego hazlo rápido": No optimices prematuramente. Primero implementa correctamente el algoritmo.
 
@@ -183,7 +398,7 @@ Usé un quadtree para búsquedas espaciales rápidas. Cuando un usuario busca tr
 
 4. La memoria importa: Un algoritmo rápido pero que consume mucha memoria puede ser peor que uno más lento pero eficiente en memoria, especialmente en dispositivos móviles.
 
-🎯 Resultados Finales
+Resultados Finales
 
 Las optimizaciones llevaron a:
 • Tiempo de respuesta: De 2-3 segundos a menos de 200ms
@@ -198,18 +413,18 @@ La combinación de algoritmos inteligentes, estructuras de datos eficientes, y t
       image: "/BlogArticles/Djistra.png"
     },
     {
-      id: 3,
+      id: 4,
       title: "IA y Reconocimiento de Movimientos",
       excerpt: "Implementando visión por computadora con Python para detectar ejercicios físicos.",
       content: `El proyecto EvoFit me permitió explorar el fascinante mundo de la inteligencia artificial aplicada al fitness, creando un sistema que actúa como entrenador personal virtual usando visión por computadora.
 
-🎯 La Visión: Tu Entrenador Personal con IA
+La Visión: Tu Entrenador Personal con IA
 
 La idea surgió de una necesidad real: muchas personas quieren hacer ejercicio en casa pero no tienen acceso a un entrenador que les corrija la técnica. Una mala ejecución no solo reduce la efectividad del ejercicio, sino que puede causar lesiones.
 
 EvoFit usa la cámara de tu dispositivo para analizar tus movimientos en tiempo real, validar si estás haciendo el ejercicio correctamente, contar repeticiones automáticamente, y darte feedback inmediato para mejorar tu técnica.
 
-🧠 Tecnologías y Librerías Utilizadas
+Tecnologías y Librerías Utilizadas
 
 Para este proyecto, elegí un stack tecnológico potente y bien establecido:
 
@@ -221,7 +436,7 @@ Para este proyecto, elegí un stack tecnológico potente y bien establecido:
 
 4. NumPy y Pandas: Para manipulación eficiente de datos y cálculos matemáticos.
 
-🎨 Características Principales del Sistema
+Características Principales del Sistema
 
 El sistema que desarrollé incluye varias capacidades sofisticadas:
 
@@ -235,7 +450,7 @@ El sistema que desarrollé incluye varias capacidades sofisticadas:
 
 • Tracking de Progreso: Guarda tu historial de entrenamientos, número de repeticiones, tiempo de ejercicio, y calorías quemadas estimadas.
 
-⚡ Desafíos Técnicos y Soluciones
+Desafíos Técnicos y Soluciones
 
 El desarrollo no fue sencillo. Enfrenté varios desafíos significativos:
 
@@ -264,7 +479,7 @@ Problema: La detección frame por frame puede ser ruidosa, causando que los punt
 
 Solución: Implementé un filtro de Kalman para suavizar las trayectorias de los puntos clave. También usé un filtro de mediana móvil para eliminar detecciones anómalas (outliers).
 
-📊 Pipeline de Procesamiento
+Pipeline de Procesamiento
 
 El flujo completo del sistema es:
 
@@ -277,7 +492,7 @@ El flujo completo del sistema es:
 7. Feedback: El sistema genera retroalimentación visual y auditiva
 8. Actualización de Estado: Si se completó una repetición correctamente, se incrementa el contador
 
-🎓 Técnicas de Machine Learning Aplicadas
+Técnicas de Machine Learning Aplicadas
 
 Para el componente de clasificación de ejercicios, implementé:
 
@@ -286,7 +501,7 @@ Para el componente de clasificación de ejercicios, implementé:
 • Ensemble Learning: Combiné múltiples modelos para mejorar la precisión general
 • Data Augmentation: Generé variaciones artificiales de los datos de entrenamiento (rotaciones, flips, cambios de escala) para hacer el modelo más robusto
 
-🧪 Entrenamiento del Modelo
+Entrenamiento del Modelo
 
 El proceso de entrenamiento fue iterativo:
 
@@ -302,7 +517,7 @@ El proceso de entrenamiento fue iterativo:
 
 6. Evaluación: Alcancé una precisión del 94% en el conjunto de test, con un recall del 92% para detección de ejercicios incorrectos.
 
-💡 Ejercicios Implementados
+Ejercicios Implementados
 
 El sistema actualmente soporta:
 • Sentadillas (Squats)
@@ -314,7 +529,7 @@ El sistema actualmente soporta:
 
 Cada ejercicio tiene su propio modelo de validación con reglas específicas sobre ángulos y posiciones correctas.
 
-🎯 Resultados e Impacto
+Resultados e Impacto
 
 Los resultados han sido impresionantes:
 
@@ -325,7 +540,7 @@ Los resultados han sido impresionantes:
 
 El sistema ha demostrado ser especialmente útil para principiantes que están aprendiendo la técnica correcta y para usuarios avanzados que quieren mantener su forma durante entrenamientos de alta intensidad.
 
-🔮 Futuro del Proyecto
+Futuro del Proyecto
 
 Las próximas mejoras incluyen:
 

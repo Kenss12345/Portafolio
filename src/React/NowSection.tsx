@@ -26,9 +26,16 @@ const NowSection = () => {
 
   const currentProjects = [
     {
+      title: "MarketAi",
+      description: "Plataforma de automatización SEO end-to-end con IA para WordPress",
+      status: "Completado",
+      image: "/ProyectosRecientes/MarketAI.png",
+      tech: ["React", "Node.js", "PostgreSQL", "n8n", "Docker"]
+    },
+    {
       title: "Portafolio Interactivo",
       description: "Este mismo proyecto que estás viendo",
-      status: "En desarrollo",
+      status: "Completado",
       image: "/ProyectosRecientes/Portafolio.png",
       tech: ["Astro", "React", "TypeScript", "Tailwind"]
     },
